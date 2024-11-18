@@ -1,0 +1,30 @@
+name: 'Publish strand version'
+description: "Publish a JSON schema as a new strand version."
+author: 'cortadocodes'
+branding:
+  icon: anchor
+  color: red
+inputs:
+  strand:
+    description: 'The SUID (strand unique identifier) for a new or existing strand to publish the schema to.'
+    required: true
+  path:
+    description: 'The path to the JSON file to publish as the new strand version (relative to the repository root).'
+    required: true
+  version:
+    description: 'The semantic version to publish the strand version as. If not provided, the Strands app will choose the version automatically based on the changes made.'
+    required: false
+    default: ''
+outputs:
+  strand_url:
+    description: 'The URL for the strand.'
+  strand_version_uri:
+    description: 'The URI for the new strand version.'
+
+runs:
+   using: 'docker'
+   image: 'docker://octue/publish-strand-version:0.1.0'
+   args:
+     - ${{ inputs.strand }}
+     - ${{ inputs.path }}
+     - ${{ inputs.version }}
