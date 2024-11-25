@@ -5,7 +5,8 @@ import sys
 
 import semver
 
-from publish_strand_version.mutations import StrandsException, publish_strand_version
+from publish_strand_version.exceptions import StrandsException
+from publish_strand_version.mutations import publish_strand_version
 
 logger = logging.getLogger(__name__)
 
