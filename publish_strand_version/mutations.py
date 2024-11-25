@@ -1,3 +1,5 @@
+import json
+
 import gql
 from gql.transport.requests import RequestsHTTPTransport
 
@@ -30,7 +32,7 @@ def _create_strand_version(strand, json_schema, major, minor, patch, candidate=N
     """
     parameters = {
         "strand": strand,
-        "json_schema": json_schema,
+        "json_schema": json.dumps(json.dumps(json_schema)),
         "major": major,
         "minor": minor,
         "patch": patch,
