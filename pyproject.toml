@@ -13,6 +13,7 @@ publish-strand-version = "publish_strand_version.cli:main"
 python = "^3.12"
 poetry = "^1.8.0"
 gql = {version = "^3.5.0", extras = ["requests"]}
+semver = "^3.0.2"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.8.0"
