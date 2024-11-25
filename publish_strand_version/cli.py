@@ -42,7 +42,7 @@ def main(argv=None):
         json_schema = json.load(f)
 
     try:
-        strand_version_uuid = publish_strand_version(
+        strand_url, strand_version_uri, strand_version_uuid = publish_strand_version(
             account=args.account,
             name=args.name,
             json_schema=json_schema,
@@ -55,6 +55,7 @@ def main(argv=None):
         sys.exit(1)
 
     print(f"{GREEN}STRAND VERSION PUBLISHING SUCCEEDED:{NO_COLOUR} {strand_version_uuid}.", file=sys.stderr)
+    print(" ".join((strand_url, strand_version_uri, strand_version_uuid)))
     sys.exit(0)
 
 

@@ -8,6 +8,8 @@ import semver
 from publish_strand_version.exceptions import StrandsException
 
 STRANDS_API_URL = "https://api.octue.com/graphql/"
+STRANDS_FRONTEND_URL = "https://strands.octue.com"
+SCHEMA_REGISTRY_URL = "https://jsonschema.registry.octue.com"
 
 logger = logging.getLogger(__name__)
 transport = RequestsHTTPTransport(url=STRANDS_API_URL)
@@ -20,7 +22,10 @@ def publish_strand_version(account, name, json_schema, version, notes=None):
     if not strand:
         strand = _create_strand(account, name)
 
-    return _create_strand_version(strand=strand, json_schema=json_schema, version=version, notes=notes)
+    strand_version_uuid = _create_strand_version(strand=strand, json_schema=json_schema, version=version, notes=notes)
+    strand_url = "/".join((STRANDS_FRONTEND_URL, account, name))
+    strand_version_uri = "/".join((SCHEMA_REGISTRY_URL, account, name, f"{version}.json"))
+    return strand_url, strand_version_uri, strand_version_uuid
 
 
 def _get_strand(account, name):
