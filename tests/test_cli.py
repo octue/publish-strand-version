@@ -45,10 +45,7 @@ class TestCLI(unittest.TestCase):
             account="some",
             name="strand",
             json_schema={"some": "schema"},
-            major=1,
-            minor=0,
-            patch=0,
-            candidate="rc.1",
+            version="1.0.0-rc.1",
             notes="Some notes.",
         )
 

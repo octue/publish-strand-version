@@ -3,7 +3,7 @@ import logging
 
 import gql
 from gql.transport.requests import RequestsHTTPTransport
-from semver import Version
+import semver
 
 from publish_strand_version.exceptions import StrandsException
 
@@ -14,21 +14,13 @@ transport = RequestsHTTPTransport(url=STRANDS_API_URL)
 client = gql.Client(transport=transport, fetch_schema_from_transport=True)
 
 
-def publish_strand_version(account, name, json_schema, major, minor, patch, candidate=None, notes=None):
+def publish_strand_version(account, name, json_schema, version, notes=None):
     strand = _get_strand(account, name)
 
     if not strand:
         strand = _create_strand(account, name)
 
-    return _create_strand_version(
-        strand=strand,
-        json_schema=json_schema,
-        major=major,
-        minor=minor,
-        patch=patch,
-        candidate=candidate,
-        notes=notes,
-    )
+    return _create_strand_version(strand=strand, json_schema=json_schema, version=version, notes=notes)
 
 
 def _get_strand(account, name):
@@ -87,25 +79,24 @@ def _create_strand(account, name):
     return response["uuid"]
 
 
-def _create_strand_version(strand, json_schema, major, minor, patch, candidate=None, notes=None):
+def _create_strand_version(strand, json_schema, version, notes=None):
     """Create a strand version for an existing strand.
 
     :param str strand: the UUID of the strand to create a new version for
     :param dict json_schema: the JSON schema for the strand version
-    :param str major: the major version for the strand version
-    :param str minor: the minor version for the strand version
-    :param str patch: the patch version for the strand version
-    :param str|None candidate: the candidate version for the strand version if there is one
+    :param str version: the semantic version for the strand version
     :param str|None notes: any notes to associate with the strand version
     :return dict: either a successful response containing the strand version's UUID or an error response
     """
+    semantic_version = semver.Version.parse(version)
+
     parameters = {
         "strand": strand,
         "json_schema": json.dumps(json.dumps(json_schema)),
-        "major": major,
-        "minor": minor,
-        "patch": patch,
-        "candidate": candidate,
+        "major": semantic_version.major,
+        "minor": semantic_version.minor,
+        "patch": semantic_version.patch,
+        "candidate": semantic_version.prerelease,
         "notes": notes,
     }
 
@@ -145,8 +136,7 @@ def _create_strand_version(strand, json_schema, major, minor, patch, candidate=N
     """
     )
 
-    version = Version(major, minor, patch, candidate)
-    logger.info("Creating strand version %r.", str(version))
+    logger.info("Creating strand version %r.", version)
     response = client.execute(query, variable_values=parameters)["createStrandVersion"]
 
     if "messages" in response:

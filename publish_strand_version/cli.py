@@ -3,8 +3,6 @@ import importlib.metadata
 import json
 import sys
 
-import semver
-
 from publish_strand_version.exceptions import StrandsException
 from publish_strand_version.mutations import publish_strand_version
 
@@ -28,7 +26,7 @@ def main(argv=None):
         "root.",
     )
     parser.add_argument("version", help="The semantic version to give the new strand version.")
-    parser.add_argument("notes", nargs="?", default=None, help="Any notes to associate to this strand version.")
+    parser.add_argument("notes", nargs="?", default=None, help="Any notes to add to the strand version.")
 
     parser.add_argument(
         "--version",
@@ -43,17 +41,12 @@ def main(argv=None):
     with open(args.path) as f:
         json_schema = json.load(f)
 
-    semantic_version = semver.Version.parse(args.version)
-
     try:
         strand_version_uuid = publish_strand_version(
             account=args.account,
             name=args.name,
             json_schema=json_schema,
-            major=semantic_version.major,
-            minor=semantic_version.minor,
-            patch=semantic_version.patch,
-            candidate=semantic_version.prerelease,
+            version=args.version,
             notes=args.notes,
         )
 

@@ -23,9 +23,7 @@ class TestPublishStrandVersion(unittest.TestCase):
                 account="some",
                 name="strand",
                 json_schema={"some": "schema"},
-                major="1",
-                minor="0",
-                patch="0",
+                version="1.0.0",
             )
 
         self.assertEqual(response, strand_version_uuid)
@@ -47,9 +45,7 @@ class TestPublishStrandVersion(unittest.TestCase):
                     account="some",
                     name="strand",
                     json_schema={"some": "schema"},
-                    major="1",
-                    minor="0",
-                    patch="0",
+                    version="1.0.0",
                 )
 
         mock_create_strand.assert_not_called()
@@ -105,13 +101,7 @@ class TestCreateStrandVersion(unittest.TestCase):
             return_value={"createStrandVersion": {"messages": [{"message": "User is not authenticated."}]}},
         ):
             with self.assertRaises(StrandsException) as error_context:
-                _create_strand_version(
-                    strand="some-uuid",
-                    json_schema={},
-                    major="0",
-                    minor="1",
-                    patch="0",
-                )
+                _create_strand_version(strand="some-uuid", json_schema={}, version="0.1.0")
 
         self.assertEqual(error_context.exception.args[0][0]["message"], "User is not authenticated.")
 
@@ -123,13 +113,7 @@ class TestCreateStrandVersion(unittest.TestCase):
             "gql.Client.execute",
             return_value={"createStrandVersion": {"uuid": strand_version_uuid}},
         ) as mock_execute:
-            response = _create_strand_version(
-                strand="some-uuid",
-                json_schema={"some": "schema"},
-                major="0",
-                minor="1",
-                patch="0",
-            )
+            response = _create_strand_version(strand="some-uuid", json_schema={"some": "schema"}, version="0.1.0-rc.1")
 
         self.assertEqual(response, strand_version_uuid)
 
@@ -138,10 +122,10 @@ class TestCreateStrandVersion(unittest.TestCase):
             {
                 "strand": "some-uuid",
                 "json_schema": '"{\\"some\\": \\"schema\\"}"',
-                "major": "0",
-                "minor": "1",
-                "patch": "0",
-                "candidate": None,
+                "major": 0,
+                "minor": 1,
+                "patch": 0,
+                "candidate": "rc.1",
                 "notes": None,
             },
         )
