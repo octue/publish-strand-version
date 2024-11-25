@@ -11,6 +11,15 @@ client = gql.Client(transport=transport, fetch_schema_from_transport=True)
 
 
 def publish_strand_version():
+    existing_strand = _get_strand()
+
+    if not existing_strand:
+        _create_strand()
+
+    return _create_strand_version()
+
+
+def _get_strand():
     pass
 
 
