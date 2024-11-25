@@ -33,6 +33,7 @@ def publish_strand_version(account, name, json_schema, major, minor, patch, cand
 
 def _get_strand(account, name):
     parameters = {"account": account, "name": name}
+    suid = f"{account}/{name}"
 
     query = gql.gql(
         """
@@ -47,20 +48,17 @@ def _get_strand(account, name):
         """
     )
 
-    response = client.execute(query, variable_values=parameters)["getStrand"]
+    response = client.execute(query, variable_values=parameters)["strand"]
 
-    if "messages" in response:
-        raise StrandsException(response["messages"])
+    if response:
+        if response.get("messages"):
+            raise StrandsException(response["messages"])
 
-    strand = response["strand"]
-    suid = f"{account}/{name}"
-
-    if strand:
         logger.info("Strand %r found.", suid)
-        return strand["uuid"]
+        return response["uuid"]
 
     logger.info("Strand %r not found.", suid)
-    return strand
+    return response
 
 
 def _create_strand(account, name):
