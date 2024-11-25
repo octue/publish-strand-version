@@ -1,3 +1,5 @@
+import os
+import tempfile
 import unittest
 from unittest.mock import mock_open, patch
 
@@ -34,15 +36,19 @@ class TestCLI(unittest.TestCase):
         strand_url = "strand-url"
         strand_version_uri = "strand-version-uri"
 
+        mock_publish_strand_version = patch(
+            "publish_strand_version.cli.publish_strand_version",
+            return_value=(strand_url, strand_version_uri, strand_version_uuid),
+        )
+
         with patch("builtins.open", mock_open(read_data='{"some": "schema"}')):
-            with patch(
-                "publish_strand_version.cli.publish_strand_version",
-                return_value=(strand_url, strand_version_uri, strand_version_uuid),
-            ) as mock_publish_strand_version:
-                with patch("sys.stderr") as mock_stderr:
-                    with patch("sys.stdout") as mock_stdout:
-                        with self.assertRaises(SystemExit) as e:
-                            cli.main(["some", "strand", "non-existent-path.json", "1.0.0-rc.1", "Some notes."])
+            with mock_publish_strand_version as mock_publish_strand_version:
+                with tempfile.NamedTemporaryFile() as temporary_file:
+                    with patch.dict(os.environ, {"GITHUB_OUTPUT": temporary_file.name}):
+                        with patch("sys.stderr") as mock_stderr:
+                            with patch("sys.stdout") as mock_stdout:
+                                with self.assertRaises(SystemExit) as e:
+                                    cli.main(["some", "strand", "non-existent-path.json", "1.0.0-rc.1", "Some notes."])
 
         mock_publish_strand_version.assert_called_with(
             account="some",

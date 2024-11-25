@@ -1,6 +1,7 @@
 import argparse
 import importlib.metadata
 import json
+import os
 import sys
 
 from publish_strand_version.exceptions import StrandsException
@@ -53,6 +54,12 @@ def main(argv=None):
     except StrandsException:
         print(f"{RED}STRAND VERSION PUBLISHING FAILED.{NO_COLOUR}", file=sys.stderr)
         sys.exit(1)
+
+    # Write outputs to GitHub outputs file for action.
+    with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+        f.write(f"strand_url={strand_url}")
+        f.write(f"strand_version_uri={strand_version_uri}")
+        f.write(f"strand_version_uuid={strand_version_uuid}")
 
     print(f"{GREEN}STRAND VERSION PUBLISHING SUCCEEDED:{NO_COLOUR} {strand_version_uuid}.", file=sys.stderr)
     print(" ".join((strand_url, strand_version_uri, strand_version_uuid)))
