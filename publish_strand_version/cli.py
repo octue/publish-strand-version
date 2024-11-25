@@ -32,7 +32,7 @@ def main(argv=None):
         "root.",
     )
     parser.add_argument("version", help="The semantic version to give the new strand version.")
-    parser.add_argument("notes", default=None, help="Any notes to associate to this strand version.")
+    parser.add_argument("notes", nargs="?", default=None, help="Any notes to associate to this strand version.")
 
     parser.add_argument(
         "--version",
