@@ -1,5 +1,6 @@
 import argparse
 import importlib.metadata
+import json
 import logging
 import sys
 
@@ -25,7 +26,11 @@ def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("account", help="The handle of the account the strand belongs to.")
     parser.add_argument("name", help="The name of the strand.")
-    parser.add_argument("json_schema", help="The JSON schema for the new strand version as a JSON-encoded string.")
+    parser.add_argument(
+        "path",
+        help="The path to the JSON schema for the new strand version. The path must be relative to the repository "
+        "root.",
+    )
     parser.add_argument("version", help="The semantic version to give the new strand version.")
     parser.add_argument("notes", default=None, help="Any notes to associate to this strand version.")
 
@@ -38,13 +43,17 @@ def main(argv=None):
     )
 
     args = parser.parse_args(argv)
+
+    with open(args.path) as f:
+        json_schema = json.load(f)
+
     semantic_version = semver.Version.parse(args.version)
 
     try:
         strand_version_uuid = publish_strand_version(
             account=args.account,
             name=args.name,
-            json_schema=args.json_schema,
+            json_schema=json_schema,
             major=semantic_version.major,
             minor=semantic_version.minor,
             patch=semantic_version.patch,
