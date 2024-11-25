@@ -3,6 +3,7 @@ import logging
 
 import gql
 from gql.transport.requests import RequestsHTTPTransport
+from semver import Version
 
 from publish_strand_version.exceptions import StrandsException
 
@@ -92,7 +93,7 @@ def _create_strand_version(strand, json_schema, major, minor, patch, candidate=N
     """Create a strand version for an existing strand.
 
     :param str strand: the UUID of the strand to create a new version for
-    :param str json_schema: the JSON schema for the strand version as a JSON-encoded string
+    :param dict json_schema: the JSON schema for the strand version
     :param str major: the major version for the strand version
     :param str minor: the minor version for the strand version
     :param str patch: the patch version for the strand version
@@ -146,12 +147,8 @@ def _create_strand_version(strand, json_schema, major, minor, patch, candidate=N
     """
     )
 
-    version = f"{major}.{minor}.{patch}"
-
-    if candidate:
-        version += f"-{candidate}"
-
-    logger.info("Creating strand version %r.", version)
+    version = Version(major, minor, patch, candidate)
+    logger.info("Creating strand version %r.", str(version))
     response = client.execute(query, variable_values=parameters)["createStrandVersion"]
 
     if "messages" in response:
