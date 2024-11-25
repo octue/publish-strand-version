@@ -1,11 +1,12 @@
 import json
+import logging
 
 import gql
 from gql.transport.requests import RequestsHTTPTransport
 
+logger = logging.getLogger(__name__)
+
 STRANDS_API_URL = "https://api.octue.com/graphql/"
-
-
 transport = RequestsHTTPTransport(url=STRANDS_API_URL)
 client = gql.Client(transport=transport, fetch_schema_from_transport=True)
 
@@ -53,10 +54,13 @@ def _get_strand(account, name):
         raise StrandsException(response["messages"])
 
     strand = response["strand"]
+    suid = f"{account}/{name}"
 
     if strand:
+        logger.info("Strand %r found.", suid)
         return strand["uuid"]
 
+    logger.info("Strand %r not found.", suid)
     return strand
 
 
@@ -76,11 +80,13 @@ def _create_strand(account, name):
         """
     )
 
+    logger.info("Creating strand %r...", f"{account}/{name}")
     response = client.execute(query, variable_values=parameters)["createStrand"]
 
     if "messages" in response:
         raise StrandsException(response["messages"])
 
+    logger.info("Finished creating strand.")
     return response["uuid"]
 
 
@@ -142,9 +148,16 @@ def _create_strand_version(strand, json_schema, major, minor, patch, candidate=N
     """
     )
 
+    version = f"{major}.{minor}.{patch}"
+
+    if candidate:
+        version += f"-{candidate}"
+
+    logger.info("Creating strand version %r.", version)
     response = client.execute(query, variable_values=parameters)["createStrandVersion"]
 
     if "messages" in response:
         raise StrandsException(response["messages"])
 
+    logger.info("Finished creating strand version.")
     return response["uuid"]
