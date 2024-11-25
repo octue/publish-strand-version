@@ -10,8 +10,8 @@ transport = RequestsHTTPTransport(url=STRANDS_API_URL)
 client = gql.Client(transport=transport, fetch_schema_from_transport=True)
 
 
-def publish_strand_version():
-    existing_strand = _get_strand()
+def publish_strand_version(account, name):
+    existing_strand = _get_strand(account, name)
 
     if not existing_strand:
         _create_strand()
@@ -19,8 +19,33 @@ def publish_strand_version():
     return _create_strand_version()
 
 
-def _get_strand():
-    pass
+def _get_strand(account, name):
+    parameters = {"account": account, "name": name}
+
+    query = gql.gql(
+        """
+        query getStrand(
+            $account: String!,
+            $name: String!,
+        ){
+            strand(account: $account, name: $name) {
+                uuid
+            }
+        }
+        """
+    )
+
+    response = client.execute(query, variable_values=parameters)["getStrand"]
+
+    if "messages" in response:
+        raise Exception(response["messages"])
+
+    strand = response["strand"]
+
+    if strand:
+        return strand["uuid"]
+
+    return strand
 
 
 def _create_strand():
