@@ -2,7 +2,25 @@ import unittest
 from unittest.mock import patch
 
 from publish_strand_version.exceptions import StrandsException
-from publish_strand_version.mutations import _create_strand, _create_strand_version
+from publish_strand_version.mutations import _create_strand, _create_strand_version, _get_strand
+
+
+class TestGetStrand(unittest.TestCase):
+    def test_none_returned_for_non_existent_strand(self):
+        """Test that `None` is returned if trying to get a non-existent strand."""
+        with patch("gql.Client.execute", return_value={"strand": None}):
+            response = _get_strand(account="some", name="strand")
+
+        self.assertIsNone(response)
+
+    def test_strand_uuid_returned_for_existing_strand(self):
+        """Test that the strand's UUID is returned if the strand exists."""
+        strand_uuid = "14aca8b2-fb34-4587-a7ba-290585265d32"
+
+        with patch("gql.Client.execute", return_value={"strand": {"uuid": strand_uuid}}):
+            response = _get_strand(account="some", name="strand")
+
+        self.assertEqual(response, strand_uuid)
 
 
 class TestCreateStrand(unittest.TestCase):
