@@ -10,6 +10,10 @@ transport = RequestsHTTPTransport(url=STRANDS_API_URL)
 client = gql.Client(transport=transport, fetch_schema_from_transport=True)
 
 
+class StrandsException(Exception):
+    pass
+
+
 def publish_strand_version(account, name, json_schema, major, minor, patch, candidate=None, notes=None):
     strand = _get_strand(account, name)
 
@@ -46,7 +50,7 @@ def _get_strand(account, name):
     response = client.execute(query, variable_values=parameters)["getStrand"]
 
     if "messages" in response:
-        raise Exception(response["messages"])
+        raise StrandsException(response["messages"])
 
     strand = response["strand"]
 
@@ -75,7 +79,7 @@ def _create_strand(account, name):
     response = client.execute(query, variable_values=parameters)["createStrand"]
 
     if "messages" in response:
-        raise Exception(response["messages"])
+        raise StrandsException(response["messages"])
 
     return response["uuid"]
 
@@ -141,6 +145,6 @@ def _create_strand_version(strand, json_schema, major, minor, patch, candidate=N
     result = client.execute(query, variable_values=parameters)["createStrandVersion"]
 
     if "messages" in result:
-        raise Exception(result["messages"])
+        raise StrandsException(result["messages"])
 
     return result
