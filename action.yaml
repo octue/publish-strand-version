@@ -27,6 +27,8 @@ outputs:
     description: 'The URL for the strand.'
   strand_version_uri:
     description: 'The URI for the new strand version.'
+  strand_version_uuid:
+    description: 'The UUID of the new strand version.'
 
 runs:
    using: 'docker'
