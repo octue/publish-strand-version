@@ -6,9 +6,9 @@ from gql.transport.requests import RequestsHTTPTransport
 
 from publish_strand_version.exceptions import StrandsException
 
-logger = logging.getLogger(__name__)
-
 STRANDS_API_URL = "https://api.octue.com/graphql/"
+
+logger = logging.getLogger(__name__)
 transport = RequestsHTTPTransport(url=STRANDS_API_URL)
 client = gql.Client(transport=transport, fetch_schema_from_transport=True)
 
