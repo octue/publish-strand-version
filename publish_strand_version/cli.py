@@ -1,16 +1,12 @@
 import argparse
 import importlib.metadata
 import json
-import logging
 import sys
 
 import semver
 
 from publish_strand_version.exceptions import StrandsException
 from publish_strand_version.mutations import publish_strand_version
-
-logger = logging.getLogger(__name__)
-
 
 RED = "\033[0;31m"
 GREEN = "\033[0;32m"
@@ -62,10 +58,10 @@ def main(argv=None):
         )
 
     except StrandsException:
-        logger.exception(f"{RED}Strand version publishing failed.{NO_COLOUR}")
+        print(f"{RED}STRAND VERSION PUBLISHING FAILED.{NO_COLOUR}")
         sys.exit(1)
 
-    logger.info(f"{GREEN}Strand version publishing succeeded (UUID: {strand_version_uuid}).{NO_COLOUR}")
+    print(f"{GREEN}STRAND VERSION PUBLISHING SUCCEEDED:{NO_COLOUR} {strand_version_uuid}.")
     sys.exit(0)
 
 
