@@ -51,10 +51,10 @@ def main(argv=None):
         )
 
     except StrandsException:
-        print(f"{RED}STRAND VERSION PUBLISHING FAILED.{NO_COLOUR}")
+        print(f"{RED}STRAND VERSION PUBLISHING FAILED.{NO_COLOUR}", file=sys.stderr)
         sys.exit(1)
 
-    print(f"{GREEN}STRAND VERSION PUBLISHING SUCCEEDED:{NO_COLOUR} {strand_version_uuid}.")
+    print(f"{GREEN}STRAND VERSION PUBLISHING SUCCEEDED:{NO_COLOUR} {strand_version_uuid}.", file=sys.stderr)
     sys.exit(0)
 
 
