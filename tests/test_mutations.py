@@ -2,7 +2,58 @@ import unittest
 from unittest.mock import patch
 
 from publish_strand_version.exceptions import StrandsException
-from publish_strand_version.mutations import _create_strand, _create_strand_version, _get_strand
+from publish_strand_version.mutations import _create_strand, _create_strand_version, _get_strand, publish_strand_version
+
+
+class TestPublishStrandVersion(unittest.TestCase):
+    def test_with_non_existent_strand(self):
+        """Test publishing a strand version for a non-existent strand."""
+        strand_uuid = "14aca8b2-fb34-4587-a7ba-290585265d32"
+        strand_version_uuid = "e75dd480-4bfa-4ae9-b5c0-853e9a114194"
+
+        with patch(
+            "gql.Client.execute",
+            side_effect=[
+                {"strand": None},
+                {"createStrand": {"uuid": strand_uuid}},
+                {"createStrandVersion": {"uuid": strand_version_uuid}},
+            ],
+        ):
+            response = publish_strand_version(
+                account="some",
+                name="strand",
+                json_schema={"some": "schema"},
+                major="1",
+                minor="0",
+                patch="0",
+            )
+
+        self.assertEqual(response, strand_version_uuid)
+
+    def test_with_existing_strand(self):
+        """Test publishing a strand version for an existing strand."""
+        strand_uuid = "14aca8b2-fb34-4587-a7ba-290585265d32"
+        strand_version_uuid = "e75dd480-4bfa-4ae9-b5c0-853e9a114194"
+
+        with patch(
+            "gql.Client.execute",
+            side_effect=[
+                {"strand": {"uuid": strand_uuid}},
+                {"createStrandVersion": {"uuid": strand_version_uuid}},
+            ],
+        ):
+            with patch("publish_strand_version.mutations._create_strand") as mock_create_strand:
+                response = publish_strand_version(
+                    account="some",
+                    name="strand",
+                    json_schema={"some": "schema"},
+                    major="1",
+                    minor="0",
+                    patch="0",
+                )
+
+        mock_create_strand.assert_not_called()
+        self.assertEqual(response, strand_version_uuid)
 
 
 class TestGetStrand(unittest.TestCase):
