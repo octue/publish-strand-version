@@ -142,9 +142,9 @@ def _create_strand_version(strand, json_schema, major, minor, patch, candidate=N
     """
     )
 
-    result = client.execute(query, variable_values=parameters)["createStrandVersion"]
+    response = client.execute(query, variable_values=parameters)["createStrandVersion"]
 
-    if "messages" in result:
-        raise StrandsException(result["messages"])
+    if "messages" in response:
+        raise StrandsException(response["messages"])
 
-    return result
+    return response["uuid"]
