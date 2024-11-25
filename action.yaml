@@ -5,14 +5,21 @@ branding:
   icon: anchor
   color: red
 inputs:
-  strand:
-    description: 'The SUID (strand unique identifier) for a new or existing strand to publish the schema to.'
+  account:
+    description: 'The account handle for a new or existing strand to publish the schema to.'
+    required: true
+  name:
+    description: 'The name of the strand to publish the schema to.'
     required: true
   path:
-    description: 'The path to the JSON file to publish as the new strand version (relative to the repository root).'
+    description: 'The path to the JSON schema to publish as the new strand version (relative to the repository root).'
     required: true
   version:
     description: 'The semantic version to publish the strand version as. If not provided, the Strands app will choose the version automatically based on the changes made.'
+    required: false
+    default: ''
+  notes:
+    description: 'Any notes to add to the strand version.'
     required: false
     default: ''
 outputs:
@@ -25,6 +32,8 @@ runs:
    using: 'docker'
    image: 'docker://octue/publish-strand-version:0.1.0'
    args:
-     - ${{ inputs.strand }}
+     - ${{ inputs.account }}
+     - ${{ inputs.name }}
      - ${{ inputs.path }}
      - ${{ inputs.version }}
+     - ${{ inputs.notes }}
