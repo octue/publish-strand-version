@@ -26,7 +26,7 @@ def publish_strand_version(account, name, json_schema, version=None, notes=None)
     json_schema_encoded = json.dumps(json.dumps(json_schema))
 
     if not version:
-        version = _suggest_semver(base=suid, proposed=json_schema_encoded)
+        version = _suggest_sem_ver(base=suid, proposed=json_schema_encoded)
 
     strand_version_uuid = _create_strand_version(
         strand=strand,
@@ -96,7 +96,7 @@ def _create_strand(account, name):
     return response["uuid"]
 
 
-def _suggest_semver(base, proposed):
+def _suggest_sem_ver(base, proposed):
     parameters = {"base": base, "proposed": proposed}
 
     query = gql.gql(
