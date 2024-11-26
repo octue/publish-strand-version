@@ -63,7 +63,7 @@ def _create_strand(account, name):
 
     query = gql.gql(
         """
-        query createStrand(
+        mutation createStrand(
             $account: String!,
             $name: String!,
         ){
