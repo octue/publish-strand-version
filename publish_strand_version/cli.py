@@ -57,9 +57,13 @@ def main(argv=None):
 
     # Write outputs to GitHub outputs file for action.
     with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-        f.write(f"strand_url={strand_url}")
-        f.write(f"strand_version_uri={strand_version_uri}")
-        f.write(f"strand_version_uuid={strand_version_uuid}")
+        f.writelines(
+            [
+                f"strand_url={strand_url}",
+                f"strand_version_uri={strand_version_uri}",
+                f"strand_version_uuid={strand_version_uuid}",
+            ]
+        )
 
     print(f"{GREEN}STRAND VERSION PUBLISHING SUCCEEDED:{NO_COLOUR} {strand_version_uuid}.", file=sys.stderr)
     print(" ".join((strand_url, strand_version_uri, strand_version_uuid)))
