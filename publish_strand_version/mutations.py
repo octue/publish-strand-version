@@ -16,7 +16,7 @@ transport = RequestsHTTPTransport(url=STRANDS_API_URL)
 client = gql.Client(transport=transport, fetch_schema_from_transport=True)
 
 
-def publish_strand_version(account, name, json_schema, version, notes=None):
+def publish_strand_version(account, name, json_schema, version=None, notes=None):
     strand = _get_strand(account, name)
 
     if not strand:

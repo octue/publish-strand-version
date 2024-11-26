@@ -26,7 +26,7 @@ def main(argv=None):
         help="The path to the JSON schema for the new strand version. The path must be relative to the repository "
         "root.",
     )
-    parser.add_argument("version", help="The semantic version to give the new strand version.")
+    parser.add_argument("version", nargs="?", help="The semantic version to give the new strand version.")
     parser.add_argument("notes", nargs="?", default=None, help="Any notes to add to the strand version.")
 
     parser.add_argument(
