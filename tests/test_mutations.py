@@ -142,7 +142,7 @@ class TestCreateStrandVersion(unittest.TestCase):
             return_value={"createStrandVersion": {"messages": [{"message": "User is not authenticated."}]}},
         ):
             with self.assertRaises(StrandsException) as error_context:
-                _create_strand_version(strand="some-uuid", json_schema={}, version="0.1.0")
+                _create_strand_version(strand="some-uuid", json_schema='"{}"', version="0.1.0")
 
         self.assertEqual(error_context.exception.args[0][0]["message"], "User is not authenticated.")
 
@@ -154,7 +154,11 @@ class TestCreateStrandVersion(unittest.TestCase):
             "gql.Client.execute",
             return_value={"createStrandVersion": {"uuid": strand_version_uuid}},
         ) as mock_execute:
-            response = _create_strand_version(strand="some-uuid", json_schema={"some": "schema"}, version="0.1.0-rc.1")
+            response = _create_strand_version(
+                strand="some-uuid",
+                json_schema='"{\\"some\\": \\"schema\\"}"',
+                version="0.1.0-rc.1",
+            )
 
         self.assertEqual(response, strand_version_uuid)
 
