@@ -65,4 +65,4 @@ class TestCLI(unittest.TestCase):
         self.assertIn(strand_version_uuid, message)
 
         message = mock_stdout.method_calls[0].args[0]
-        self.assertEqual(message, f"{strand_url} {strand_version_uri} {strand_version_uuid}")
+        self.assertEqual(message, strand_version_uuid)
