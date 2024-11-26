@@ -1,8 +1,15 @@
+import json
 import unittest
 from unittest.mock import patch
 
 from publish_strand_version.exceptions import StrandsException
-from publish_strand_version.mutations import _create_strand, _create_strand_version, _get_strand, publish_strand_version
+from publish_strand_version.mutations import (
+    _create_strand,
+    _create_strand_version,
+    _get_strand,
+    _suggest_sem_ver,
+    publish_strand_version,
+)
 
 
 class TestPublishStrandVersion(unittest.TestCase):
@@ -95,6 +102,36 @@ class TestCreateStrand(unittest.TestCase):
 
         self.assertEqual(response, strand_uuid)
         self.assertEqual(mock_execute.mock_calls[0].kwargs["variable_values"], {"account": "some", "name": "strand"})
+
+
+class TestSuggestSemVer(unittest.TestCase):
+    def test_error_raised_if_unauthenticated(self):
+        """Test that an error is raised if trying to get a semantic version suggestion without authentication."""
+        with patch(
+            "gql.Client.execute",
+            return_value={"suggestSemVer": {"messages": [{"message": "User is not authenticated."}]}},
+        ):
+            with self.assertRaises(StrandsException) as error_context:
+                _suggest_sem_ver(base="some/strand", proposed=json.dumps(json.dumps({"some": "schema"})))
+
+        self.assertEqual(error_context.exception.args[0][0]["message"], "User is not authenticated.")
+
+    def test_suggesting_sem_ver(self):
+        mock_response = {
+            "suggestSemVer": {"suggestedVersion": "0.2.0", "isBreaking": False, "isFeature": True, "isPatch": False}
+        }
+
+        json_schema_encoded = json.dumps(json.dumps({"some": "schema"}))
+
+        with patch("gql.Client.execute", return_value=mock_response) as mock_execute:
+            response = _suggest_sem_ver(base="some/strand", proposed=json_schema_encoded)
+
+        self.assertEqual(response, "0.2.0")
+
+        self.assertEqual(
+            mock_execute.mock_calls[0].kwargs["variable_values"],
+            {"base": "some/strand", "proposed": json_schema_encoded},
+        )
 
 
 class TestCreateStrandVersion(unittest.TestCase):
