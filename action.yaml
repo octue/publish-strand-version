@@ -4,7 +4,11 @@ author: 'cortadocodes'
 branding:
   icon: anchor
   color: red
+
 inputs:
+  strands_token:
+    description: 'A Strands access token with permission to create a strand version for the given strand.'
+    required: true
   account:
     description: 'The account handle for a new or existing strand to publish the schema to.'
     required: true
@@ -22,6 +26,7 @@ inputs:
     description: 'Any notes to add to the strand version.'
     required: false
     default: ''
+
 outputs:
   strand_url:
     description: 'The URL for the strand.'
