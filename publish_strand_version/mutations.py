@@ -51,7 +51,12 @@ def _get_strand(account, name):
             $name: String!,
         ){
             strand(account: $account, name: $name) {
-                uuid
+                ... on Strand {
+                    uuid
+                }
+                ... on DoesNotExist {
+                    message
+                }
             }
         }
         """
@@ -67,7 +72,7 @@ def _get_strand(account, name):
         return response["uuid"]
 
     logger.info("Strand %r not found.", suid)
-    return response
+    return None
 
 
 def _create_strand(account, name):
