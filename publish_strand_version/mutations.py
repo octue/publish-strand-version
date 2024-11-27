@@ -50,7 +50,7 @@ def _get_strand(account, name):
             $account: String!,
             $name: String!,
         ){
-            strand(account: $account, name: $name) {
+            strandByName(account: $account, name: $name) {
                 ... on Strand {
                     uuid
                 }
