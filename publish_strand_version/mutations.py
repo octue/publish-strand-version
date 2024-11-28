@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 
 import gql
 from gql.transport.requests import RequestsHTTPTransport
@@ -7,9 +8,9 @@ import semver
 
 from publish_strand_version.exceptions import StrandsException
 
-STRANDS_API_URL = "http://localhost:8000/graphql/"
-STRANDS_FRONTEND_URL = "https://strands.octue.com"
-SCHEMA_REGISTRY_URL = "https://jsonschema.registry.octue.com"
+STRANDS_API_URL = os.environ.get("STRANDS_API_URL", "http://api.octue.com/graphql")
+STRANDS_FRONTEND_URL = os.environ.get("STRANDS_FRONTEND_URL", "https://strands.octue.com")
+STRANDS_SCHEMA_REGISTRY_URL = os.environ.get("STRANDS_SCHEMA_REGISTRY_URL", "https://jsonschema.registry.octue.com")
 
 logger = logging.getLogger(__name__)
 transport = RequestsHTTPTransport(url=STRANDS_API_URL)
@@ -36,7 +37,7 @@ def publish_strand_version(account, name, json_schema, version=None, notes=None)
     )
 
     strand_url = "/".join((STRANDS_FRONTEND_URL, suid))
-    strand_version_uri = "/".join((SCHEMA_REGISTRY_URL, suid, f"{version}.json"))
+    strand_version_uri = "/".join((STRANDS_SCHEMA_REGISTRY_URL, suid, f"{version}.json"))
     return strand_url, strand_version_uri, strand_version_uuid
 
 
