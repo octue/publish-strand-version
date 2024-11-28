@@ -18,6 +18,15 @@ client = gql.Client(transport=transport, fetch_schema_from_transport=True)
 
 
 def publish_strand_version(account, name, json_schema, version=None, notes=None):
+    """Publish a strand version for a new or existing strand.
+
+    :param str account: the handle of the account the strand belongs to
+    :param str name: the name of the strand
+    :param dict json_schema: the JSON schema to add to the strand as a strand version
+    :param str version: the semantic version to give the strand version
+    :param str notes: any notes to associate with the strand version
+    :return (str, str, str):
+    """
     strand = _get_strand(account, name)
 
     if not strand:
@@ -42,6 +51,12 @@ def publish_strand_version(account, name, json_schema, version=None, notes=None)
 
 
 def _get_strand(account, name):
+    """Query the GraphQL endpoint for a strand.
+
+    :param str account: the handle of the account the strand belongs to
+    :param str name: the name of the strand
+    :return str|None: the strand's UUID if the strand exists; `None` if it doesn't exist
+    """
     parameters = {"account": account, "name": name}
     suid = f"{account}/{name}"
 
@@ -77,6 +92,13 @@ def _get_strand(account, name):
 
 
 def _create_strand(account, name):
+    """Send a mutation to the GraphQL endpoint that creates a strand.
+
+    :param str account: the handle of an existing account to create the strand in
+    :param str name: the name to give the strand
+    :raises publish_strand_version.exceptions.StrandsException: if the mutation fails for any reason
+    :return str: the UUID of the created strand
+    """
     parameters = {"account": account, "name": name}
 
     query = gql.gql(
@@ -103,6 +125,13 @@ def _create_strand(account, name):
 
 
 def _suggest_sem_ver(base, proposed):
+    """Query the GraphQL endpoint for a suggested semantic version for the proposed schema relative to a base schema.
+
+    :param str base: the base schema as a strand unique identifier (SUID) of an existing strand
+    :param str proposed: the proposed schema as double-JSON-encoded string
+    :raises publish_strand_version.exceptions.StrandsException: if the query fails for any reason
+    :return str: the suggested semantic version for the proposed schema
+    """
     parameters = {"base": base, "proposed": proposed}
 
     query = gql.gql(
@@ -158,7 +187,7 @@ def _suggest_sem_ver(base, proposed):
 
 
 def _create_strand_version(strand, json_schema, version, notes=None):
-    """Create a strand version for an existing strand.
+    """Send a mutation to the GraphQL endpoint that creates a strand version for an existing strand.
 
     :param str strand: the UUID of the strand to create a new version for
     :param str json_schema: the JSON schema for the strand version as a double-JSON-encoded string
