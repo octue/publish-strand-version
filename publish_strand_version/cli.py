@@ -4,8 +4,8 @@ import json
 import os
 import sys
 
+from publish_strand_version.api import publish_strand_version
 from publish_strand_version.exceptions import StrandsException
-from publish_strand_version.mutations import publish_strand_version
 
 RED = "\033[0;31m"
 GREEN = "\033[0;32m"

@@ -2,14 +2,14 @@ import json
 import unittest
 from unittest.mock import patch
 
-from publish_strand_version.exceptions import StrandsException
-from publish_strand_version.mutations import (
+from publish_strand_version.api import (
     _create_strand,
     _create_strand_version,
     _get_strand,
     _suggest_sem_ver,
     publish_strand_version,
 )
+from publish_strand_version.exceptions import StrandsException
 
 
 class TestPublishStrandVersion(unittest.TestCase):
@@ -49,7 +49,7 @@ class TestPublishStrandVersion(unittest.TestCase):
                 {"createStrandVersion": {"uuid": expected_strand_version_uuid}},
             ],
         ):
-            with patch("publish_strand_version.mutations._create_strand") as mock_create_strand:
+            with patch("publish_strand_version.api._create_strand") as mock_create_strand:
                 strand_url, strand_version_uri, strand_version_uuid = publish_strand_version(
                     account="some",
                     name="strand",
