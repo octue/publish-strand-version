@@ -1,7 +1,8 @@
 {
     "properties": {
         "test": {
-            "type": "integer"
+            "type": "integer",
+            "minimum": 0
         }
     }
 }
