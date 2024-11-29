@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Publish strand version
         id: publish-strand-version
-        uses: octue/publish-strand-version@${{ GITHUB_HEAD_REF }}
+        uses: octue/publish-strand-version@${{ github.head_ref }}
         with:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: cortadocodes
