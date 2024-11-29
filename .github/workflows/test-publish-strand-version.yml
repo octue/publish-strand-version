@@ -2,6 +2,8 @@ name: test-publish-strand-version
 
 on:
   push:
+    paths:
+      - tests/schema.json
     branches-ignore:
       - main
 
@@ -9,7 +11,7 @@ jobs:
   test-publish-strand-version:
     if: "!contains(github.event.head_commit.message, 'skipci')"
     runs-on: ubuntu-latest
-    path: tests/schema.json
+
     steps:
       - name: Publish strand version
         steps: publish-strand-version
