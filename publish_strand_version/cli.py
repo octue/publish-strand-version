@@ -1,6 +1,7 @@
 import argparse
 import importlib.metadata
 import json
+import logging
 import os
 import sys
 
@@ -10,6 +11,13 @@ from publish_strand_version.exceptions import StrandsException
 RED = "\033[0;31m"
 GREEN = "\033[0;32m"
 NO_COLOUR = "\033[0m"
+
+
+logging.basicConfig(
+    stream=sys.stdout,
+    format="[%(asctime)s | %(levelname)s | %(name)s] %(message)s",
+    level=logging.INFO,
+)
 
 
 def main(argv=None):

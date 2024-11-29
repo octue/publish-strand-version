@@ -165,7 +165,7 @@ def _create_strand_version(token, json_schema, version, notes=None):
     """
     )
 
-    logger.info("Creating strand version %r.", version)
+    logger.info("Creating strand version %r...", version)
     response = client.execute(query, variable_values=parameters)["createStrandVersion"]
 
     if "messages" in response:
