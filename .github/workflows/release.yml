@@ -12,15 +12,15 @@ jobs:
     if: "github.event.pull_request.merged == true"
     runs-on: ubuntu-latest
     env:
-      USING_COVERAGE: '3.10'
+      USING_COVERAGE: '3.12'
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.12'
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
@@ -29,11 +29,8 @@ jobs:
         id: get-package-version
         run: echo "PACKAGE_VERSION=$(poetry version -s)" >> $GITHUB_OUTPUT
 
-      - name: Install tox
-        run: pip install tox
-
       - name: Run tests
-        run: tox
+        run: python -m unittest
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -49,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: tests
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Create Release
       uses: actions/create-release@v1
@@ -67,18 +64,18 @@ jobs:
     needs: [tests, release]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Log in to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v3.1.1
+        uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64
           push: true
-          tags: octue/check-semantic-version:${{ needs.tests.outputs.package_version }},octue/check-semantic-version:latest
+          tags: octue/publish-strand-version:${{ needs.tests.outputs.package_version }},octue/publish-strand-version:latest
