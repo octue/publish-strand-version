@@ -1,0 +1,28 @@
+name: test-publish-strand-version
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  test-publish-strand-version:
+    if: "!contains(github.event.head_commit.message, 'skipci')"
+    runs-on: ubuntu-latest
+    path: tests/schema.json
+    steps:
+      - name: Publish strand version
+        steps: publish-strand-version
+        uses: octue/publish-strand-version@${{ GITHUB_HEAD_REF }}
+        with:
+          token: ${{ secrets.STRANDS_TOKEN }}
+          account: cortadocodes
+          name: test-publish-strand-version
+          path: tests/schema.json
+          notes: "Some test notes."
+
+      - name: Print outputs
+        run: |
+          echo "Strand URL ${{ steps.publish-strand-version.outputs.strand_url }}"
+          echo "Strand version URI ${{ steps.publish-strand-version.outputs.strand_version_uri }}"
+          echo "Strand version UUID ${{ steps.publish-strand-version.outputs.strand_version_uuid }}"
