@@ -132,7 +132,7 @@ def _create_strand_version(token, json_schema, version, notes=None):
     query = gql.gql(
         """
         mutation createStrandVersionViaToken(
-            $strand_token: String!,
+            $token: String!,
             $json_schema: String!,
             $major: String!,
             $minor: String!,
@@ -141,7 +141,7 @@ def _create_strand_version(token, json_schema, version, notes=None):
             $notes: String
         ) {
             createStrandVersion(
-                strandToken: $strand_token,
+                token: token,
                 jsonSchema: $json_schema,
                 major: $major,
                 minor: $minor,
