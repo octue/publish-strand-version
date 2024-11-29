@@ -19,6 +19,10 @@ def main(argv=None):
     :return None:
     """
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "token",
+        help="A Strands access token with permission to create a strand version for the given strand.",
+    )
     parser.add_argument("account", help="The handle of the account the strand belongs to.")
     parser.add_argument("name", help="The name of the strand.")
     parser.add_argument(
@@ -44,6 +48,7 @@ def main(argv=None):
 
     try:
         strand_url, strand_version_uri, strand_version_uuid = publish_strand_version(
+            token=args.token,
             account=args.account,
             name=args.name,
             json_schema=json_schema,

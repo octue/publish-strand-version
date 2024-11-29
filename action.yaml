@@ -6,11 +6,11 @@ branding:
   color: red
 
 inputs:
-  strands_token:
+  token:
     description: 'A Strands access token with permission to create a strand version for the given strand.'
     required: true
   account:
-    description: 'The account handle for a new or existing strand to publish the schema to.'
+    description: 'The account handle for the strand to publish the schema to.'
     required: true
   name:
     description: 'The name of the strand to publish the schema to.'
@@ -39,6 +39,7 @@ runs:
    using: 'docker'
    image: 'docker://octue/publish-strand-version:0.1.0'
    args:
+     - ${{ inputs.token }}
      - ${{ inputs.account }}
      - ${{ inputs.name }}
      - ${{ inputs.path }}

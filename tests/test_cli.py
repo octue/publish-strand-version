@@ -48,9 +48,19 @@ class TestCLI(unittest.TestCase):
                         with patch("sys.stderr") as mock_stderr:
                             with patch("sys.stdout") as mock_stdout:
                                 with self.assertRaises(SystemExit) as e:
-                                    cli.main(["some", "strand", "non-existent-path.json", "1.0.0-rc.1", "Some notes."])
+                                    cli.main(
+                                        [
+                                            "some-token",
+                                            "some",
+                                            "strand",
+                                            "non-existent-path.json",
+                                            "1.0.0-rc.1",
+                                            "Some notes.",
+                                        ]
+                                    )
 
         mock_publish_strand_version.assert_called_with(
+            token="some-token",
             account="some",
             name="strand",
             json_schema={"some": "schema"},
