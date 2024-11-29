@@ -2,8 +2,8 @@ name: test-publish-strand-version
 
 on:
   push:
-    paths:
-      - tests/schema.json
+#    paths:
+#      - tests/schema.json
     branches-ignore:
       - main
 
@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Publish strand version
         id: publish-strand-version
-        uses: "octue/publish-strand-version@${{ github.head_ref }}"
+        uses: octue/publish-strand-version@create-initial-action
         with:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: cortadocodes
