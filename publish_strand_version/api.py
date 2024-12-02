@@ -29,7 +29,7 @@ def publish_strand_version(token, account, name, json_schema, version=None, note
     :return (str, str, str):
     """
     suid = f"{account}/{name}"
-    json_schema_encoded = json.dumps(json.dumps(json_schema))
+    json_schema_encoded = json.dumps(json_schema)
 
     if not version:
         version = _suggest_sem_ver(base=suid, proposed=json_schema_encoded)
@@ -50,7 +50,7 @@ def _suggest_sem_ver(base, proposed):
     """Query the GraphQL endpoint for a suggested semantic version for the proposed schema relative to a base schema.
 
     :param str base: the base schema as a strand unique identifier (SUID) of an existing strand
-    :param str proposed: the proposed schema as double-JSON-encoded string
+    :param str proposed: the proposed schema as a JSON-encoded string
     :raises publish_strand_version.exceptions.StrandsException: if the query fails for any reason
     :return str: the suggested semantic version for the proposed schema
     """
@@ -112,7 +112,7 @@ def _create_strand_version(token, json_schema, version, notes=None):
     """Send a mutation to the GraphQL endpoint that creates a strand version for an existing strand.
 
     :param str token: a Strands access token with permission to add a new strand version to a specific strand
-    :param str json_schema: the JSON schema for the strand version as a double-JSON-encoded string
+    :param str json_schema: the JSON schema for the strand version as a JSON-encoded string
     :param str version: the semantic version for the strand version
     :param str|None notes: any notes to associate with the strand version
     :return dict: either a successful response containing the strand version's UUID or an error response
