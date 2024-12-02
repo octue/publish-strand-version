@@ -91,9 +91,9 @@ class TestCreateStrandVersion(unittest.TestCase):
             {
                 "token": "some-token",
                 "json_schema": '"{\\"some\\": \\"schema\\"}"',
-                "major": 0,
-                "minor": 1,
-                "patch": 0,
+                "major": "0",
+                "minor": "1",
+                "patch": "0",
                 "candidate": "rc.1",
                 "notes": None,
             },

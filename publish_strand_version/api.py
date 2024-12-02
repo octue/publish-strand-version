@@ -122,10 +122,10 @@ def _create_strand_version(token, json_schema, version, notes=None):
     parameters = {
         "token": token,
         "json_schema": json_schema,
-        "major": semantic_version.major,
-        "minor": semantic_version.minor,
-        "patch": semantic_version.patch,
-        "candidate": semantic_version.prerelease,
+        "major": str(semantic_version.major),
+        "minor": str(semantic_version.minor),
+        "patch": str(semantic_version.patch),
+        "candidate": str(semantic_version.prerelease),
         "notes": notes,
     }
 
