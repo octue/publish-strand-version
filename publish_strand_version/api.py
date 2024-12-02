@@ -32,7 +32,7 @@ def publish_strand_version(token, account, name, json_schema, version=None, note
     json_schema_encoded = json.dumps(json_schema)
 
     if not version:
-        version = _suggest_sem_ver(base=suid, proposed=json_schema_encoded)
+        version = _suggest_sem_ver(token=token, base=suid, proposed=json_schema_encoded)
 
     strand_version_uuid = _create_strand_version(
         token=token,
@@ -46,23 +46,25 @@ def publish_strand_version(token, account, name, json_schema, version=None, note
     return strand_url, strand_version_uri, strand_version_uuid
 
 
-def _suggest_sem_ver(base, proposed):
+def _suggest_sem_ver(token, base, proposed):
     """Query the GraphQL endpoint for a suggested semantic version for the proposed schema relative to a base schema.
 
+    :param str token: a Strands access token with any scope
     :param str base: the base schema as a strand unique identifier (SUID) of an existing strand
     :param str proposed: the proposed schema as a JSON-encoded string
     :raises publish_strand_version.exceptions.StrandsException: if the query fails for any reason
     :return str: the suggested semantic version for the proposed schema
     """
-    parameters = {"base": base, "proposed": proposed}
+    parameters = {"token": token, "base": base, "proposed": proposed}
 
     query = gql.gql(
         """
-        mutation suggestSemVer(
+        mutation suggestSemVerViaToken(
+            $token: String!,
             $base: String!,
             $proposed: String!,
         ){
-            suggestSemVer(base: $base, proposed: $proposed) {
+            suggestSemVerViaToken(token: $token, base: $base, proposed: $proposed) {
                 ... on VersionSuggestion {
                     suggestedVersion
                     isBreaking
@@ -87,7 +89,7 @@ def _suggest_sem_ver(base, proposed):
     )
 
     logger.info("Getting suggested semantic version...")
-    response = client.execute(query, variable_values=parameters)["suggestSemVer"]
+    response = client.execute(query, variable_values=parameters)["suggestSemVerViaToken"]
 
     if "messages" in response or "message" in response:
         raise StrandsException(response.get("messages") or response.get("message"))

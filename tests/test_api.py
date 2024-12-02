@@ -33,28 +33,37 @@ class TestSuggestSemVer(unittest.TestCase):
         """Test that an error is raised if trying to get a semantic version suggestion without authentication."""
         with patch(
             "gql.Client.execute",
-            return_value={"suggestSemVer": {"messages": [{"message": "User is not authenticated."}]}},
+            return_value={"suggestSemVerViaToken": {"messages": [{"message": "User is not authenticated."}]}},
         ):
             with self.assertRaises(StrandsException) as error_context:
-                _suggest_sem_ver(base="some/strand", proposed=json.dumps(json.dumps({"some": "schema"})))
+                _suggest_sem_ver(
+                    token="some-token",
+                    base="some/strand",
+                    proposed=json.dumps(json.dumps({"some": "schema"})),
+                )
 
         self.assertEqual(error_context.exception.args[0][0]["message"], "User is not authenticated.")
 
     def test_suggesting_sem_ver(self):
         mock_response = {
-            "suggestSemVer": {"suggestedVersion": "0.2.0", "isBreaking": False, "isFeature": True, "isPatch": False}
+            "suggestSemVerViaToken": {
+                "suggestedVersion": "0.2.0",
+                "isBreaking": False,
+                "isFeature": True,
+                "isPatch": False,
+            }
         }
 
         json_schema_encoded = json.dumps(json.dumps({"some": "schema"}))
 
         with patch("gql.Client.execute", return_value=mock_response) as mock_execute:
-            response = _suggest_sem_ver(base="some/strand", proposed=json_schema_encoded)
+            response = _suggest_sem_ver(token="some-token", base="some/strand", proposed=json_schema_encoded)
 
         self.assertEqual(response, "0.2.0")
 
         self.assertEqual(
             mock_execute.mock_calls[0].kwargs["variable_values"],
-            {"base": "some/strand", "proposed": json_schema_encoded},
+            {"token": "some-token", "base": "some/strand", "proposed": json_schema_encoded},
         )
 
 
