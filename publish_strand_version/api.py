@@ -8,7 +8,7 @@ import semver
 
 from publish_strand_version.exceptions import StrandsException
 
-STRANDS_API_URL = os.environ.get("STRANDS_API_URL", "http://api.octue.com/graphql")
+STRANDS_API_URL = os.environ.get("STRANDS_API_URL", "https://api.octue.com/graphql")
 STRANDS_FRONTEND_URL = os.environ.get("STRANDS_FRONTEND_URL", "https://strands.octue.com")
 STRANDS_SCHEMA_REGISTRY_URL = os.environ.get("STRANDS_SCHEMA_REGISTRY_URL", "https://jsonschema.registry.octue.com")
 
