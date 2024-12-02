@@ -29,14 +29,13 @@ def publish_strand_version(token, account, name, json_schema, version=None, note
     :return (str, str, str):
     """
     suid = f"{account}/{name}"
-    json_schema_encoded = json.dumps(json_schema)
 
     if not version:
-        version = _suggest_sem_ver(token=token, base=suid, proposed=json_schema_encoded)
+        version = _suggest_sem_ver(token=token, base=suid, proposed=json.dumps(json_schema))
 
     strand_version_uuid = _create_strand_version(
         token=token,
-        json_schema=json_schema_encoded,
+        json_schema=json_schema,
         version=version,
         notes=notes,
     )
@@ -114,7 +113,7 @@ def _create_strand_version(token, json_schema, version, notes=None):
     """Send a mutation to the GraphQL endpoint that creates a strand version for an existing strand.
 
     :param str token: a Strands access token with permission to add a new strand version to a specific strand
-    :param str json_schema: the JSON schema for the strand version as a JSON-encoded string
+    :param dict json_schema: the JSON schema for the strand version as a JSON-encoded string
     :param str version: the semantic version for the strand version
     :param str|None notes: any notes to associate with the strand version
     :return dict: either a successful response containing the strand version's UUID or an error response
@@ -135,7 +134,7 @@ def _create_strand_version(token, json_schema, version, notes=None):
         """
         mutation createStrandVersionViaToken(
             $token: String!,
-            $json_schema: String!,
+            $json_schema: JSON!,
             $major: String!,
             $minor: String!,
             $patch: String!,
