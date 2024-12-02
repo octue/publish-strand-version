@@ -2,6 +2,9 @@
     "properties": {
         "test": {
             "type": "integer"
+        },
+        "another": {
+            "type": "integer"
         }
     }
 }
