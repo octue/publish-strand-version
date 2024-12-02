@@ -11,7 +11,10 @@ class TestPublishStrandVersion(unittest.TestCase):
         """Test publishing a strand version for an existing strand."""
         expected_strand_version_uuid = "e75dd480-4bfa-4ae9-b5c0-853e9a114194"
 
-        with patch("gql.Client.execute", side_effect=[{"createStrandVersion": {"uuid": expected_strand_version_uuid}}]):
+        with patch(
+            "gql.Client.execute",
+            side_effect=[{"createStrandVersionViaToken": {"uuid": expected_strand_version_uuid}}],
+        ):
             strand_url, strand_version_uri, strand_version_uuid = publish_strand_version(
                 token="some-token",
                 account="some",
@@ -60,7 +63,7 @@ class TestCreateStrandVersion(unittest.TestCase):
         """Test that an error is raised if trying to create a strand version without authentication."""
         with patch(
             "gql.Client.execute",
-            return_value={"createStrandVersion": {"messages": [{"message": "User is not authenticated."}]}},
+            return_value={"createStrandVersionViaToken": {"messages": [{"message": "User is not authenticated."}]}},
         ):
             with self.assertRaises(StrandsException) as error_context:
                 _create_strand_version(token="some-token", json_schema='"{}"', version="0.1.0")
@@ -73,7 +76,7 @@ class TestCreateStrandVersion(unittest.TestCase):
 
         with patch(
             "gql.Client.execute",
-            return_value={"createStrandVersion": {"uuid": strand_version_uuid}},
+            return_value={"createStrandVersionViaToken": {"uuid": strand_version_uuid}},
         ) as mock_execute:
             response = _create_strand_version(
                 token="some-token",
@@ -86,7 +89,7 @@ class TestCreateStrandVersion(unittest.TestCase):
         self.assertEqual(
             mock_execute.mock_calls[0].kwargs["variable_values"],
             {
-                "strand_token": "some-token",
+                "token": "some-token",
                 "json_schema": '"{\\"some\\": \\"schema\\"}"',
                 "major": 0,
                 "minor": 1,

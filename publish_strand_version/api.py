@@ -120,7 +120,7 @@ def _create_strand_version(token, json_schema, version, notes=None):
     semantic_version = semver.Version.parse(version)
 
     parameters = {
-        "strand_token": token,
+        "token": token,
         "json_schema": json_schema,
         "major": semantic_version.major,
         "minor": semantic_version.minor,
@@ -140,8 +140,8 @@ def _create_strand_version(token, json_schema, version, notes=None):
             $candidate: String,
             $notes: String
         ) {
-            createStrandVersion(
-                token: token,
+            createStrandVersionViaToken(
+                token: $token,
                 jsonSchema: $json_schema,
                 major: $major,
                 minor: $minor,
@@ -166,7 +166,7 @@ def _create_strand_version(token, json_schema, version, notes=None):
     )
 
     logger.info("Creating strand version %r...", version)
-    response = client.execute(query, variable_values=parameters)["createStrandVersion"]
+    response = client.execute(query, variable_values=parameters)["createStrandVersionViaToken"]
 
     if "messages" in response:
         raise StrandsException(response["messages"])
