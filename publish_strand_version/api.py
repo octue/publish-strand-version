@@ -35,6 +35,8 @@ def publish_strand_version(token, account, name, json_schema, version=None, note
 
     strand_version_uuid = _create_strand_version(
         token=token,
+        account=account,
+        name=name,
         json_schema=json_schema,
         version=version,
         notes=notes,
@@ -109,10 +111,12 @@ def _suggest_sem_ver(token, base, proposed):
     return response["suggestedVersion"]
 
 
-def _create_strand_version(token, json_schema, version, notes=None):
+def _create_strand_version(token, account, name, json_schema, version, notes=None):
     """Send a mutation to the GraphQL endpoint that creates a strand version for an existing strand.
 
     :param str token: a Strands access token with permission to add a new strand version to a specific strand
+    :param str account: the handle of the account the strand belongs to
+    :param str name: the name of the strand
     :param dict json_schema: the JSON schema for the strand version as a JSON-encoded string
     :param str version: the semantic version for the strand version
     :param str|None notes: any notes to associate with the strand version
@@ -122,6 +126,8 @@ def _create_strand_version(token, json_schema, version, notes=None):
 
     parameters = {
         "token": token,
+        "account": account,
+        "name": name,
         "json_schema": json_schema,
         "major": str(semantic_version.major),
         "minor": str(semantic_version.minor),
@@ -134,6 +140,8 @@ def _create_strand_version(token, json_schema, version, notes=None):
         """
         mutation createStrandVersionViaToken(
             $token: String!,
+            $account: String!,
+            $name: String!,
             $json_schema: JSON!,
             $major: String!,
             $minor: String!,
@@ -143,6 +151,8 @@ def _create_strand_version(token, json_schema, version, notes=None):
         ) {
             createStrandVersionViaToken(
                 token: $token,
+                account: $account,
+                name: $name,
                 jsonSchema: $json_schema,
                 major: $major,
                 minor: $minor,
@@ -166,7 +176,8 @@ def _create_strand_version(token, json_schema, version, notes=None):
     """
     )
 
-    logger.info("Creating strand version %r...", version)
+    svuid = f"{account}/{name}:{version}"
+    logger.info("Creating strand version %r...", svuid)
     response = client.execute(query, variable_values=parameters)["createStrandVersionViaToken"]
 
     if "messages" in response:
