@@ -8,6 +8,9 @@
         },
         "again": {
             "type": "number"
+        },
+        "once_more": {
+            "type": "string"
         }
     }
 }
