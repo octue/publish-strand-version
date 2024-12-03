@@ -72,9 +72,9 @@ def main(argv=None):
     with open(os.environ["GITHUB_OUTPUT"], "a") as f:
         f.writelines(
             [
-                f"strand_url={strand_url}",
-                f"strand_version_uri={strand_version_uri}",
-                f"strand_version_uuid={strand_version_uuid}",
+                f"strand_url={strand_url}\n",
+                f"strand_version_uri={strand_version_uri}\n",
+                f"strand_version_uuid={strand_version_uuid}\n",
             ]
         )
 
