@@ -2,8 +2,8 @@ name: test-publish-strand-version
 
 on:
   push:
-#    paths:
-#      - tests/schema.json
+    paths:
+      - tests/schema.json
     branches-ignore:
       - main
 

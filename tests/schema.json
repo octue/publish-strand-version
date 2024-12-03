@@ -5,6 +5,9 @@
         },
         "another": {
             "type": "integer"
+        },
+        "again": {
+            "type": "object"
         }
     }
 }
