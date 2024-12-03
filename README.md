@@ -11,7 +11,7 @@ Here's an example workflow that, on push to the `main` branch:
 You can also specify the version using the `version` input.
 
 ```yaml
-name: publish-strand-version
+name: example-workflow
 
 on:
   push:
@@ -21,7 +21,7 @@ on:
       - main
 
 jobs:
-  publish-strand-version:
+  publish-my-schema-updates:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,7 +29,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Publish strand version
-        id: publish-strand-version
+        id: publish
         uses: octue/publish-strand-version@0.1.0
         with:
           token: ${{ secrets.STRANDS_TOKEN }}  # See below for instructions on getting a token.
@@ -41,9 +41,9 @@ jobs:
 
       - name: Print outputs
         run: |
-          echo "Strand URL: ${{ steps.publish-strand-version.outputs.strand_url }}"
-          echo "Strand version URI: ${{ steps.publish-strand-version.outputs.strand_version_uri }}"
-          echo "Strand version UUID: ${{ steps.publish-strand-version.outputs.strand_version_uuid }}"
+          echo "Strand URL: ${{ steps.publish.outputs.strand_url }}"
+          echo "Strand version URI: ${{ steps.publish.outputs.strand_version_uri }}"
+          echo "Strand version UUID: ${{ steps.publish.outputs.strand_version_uuid }}"
 ```
 
 ## Prerequisites
