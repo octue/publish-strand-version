@@ -46,6 +46,8 @@ jobs:
           echo "Strand version UUID: ${{ steps.publish.outputs.strand_version_uuid }}"
 ```
 
+See a working example [here](.github/workflows/test-publish-strand-version.yml).
+
 ## Prerequisites
 Before using this action, you must have:
 - A [Strands](https://strands.octue.com) account
@@ -54,8 +56,7 @@ Before using this action, you must have:
 
 ### Creating a strand access token
 1. Log in to your Strands account
-2. Navigate to the strand you want to publish new versions to
-3. Click on "Strand settings"
+2. Go to `https://strands.octue.com/<your-handle>/<your-strand>/integrations`
 4. Click "Create an access token". Store your token securely in a password manager.
 5. Add the access token to the GitHub Actions secrets for your repository as a repository secret
    - Go to `https://github.com/<your-org>/<your-repository>/settings/secrets/actions`
