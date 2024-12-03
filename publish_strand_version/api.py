@@ -126,7 +126,7 @@ def _create_strand_version(token, json_schema, version, notes=None):
         "major": str(semantic_version.major),
         "minor": str(semantic_version.minor),
         "patch": str(semantic_version.patch),
-        "candidate": str(semantic_version.prerelease),
+        "candidate": semantic_version.prerelease,
         "notes": notes,
     }
 

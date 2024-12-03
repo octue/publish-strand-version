@@ -75,7 +75,7 @@ class TestCreateStrandVersion(unittest.TestCase):
             return_value={"createStrandVersionViaToken": {"messages": [{"message": "User is not authenticated."}]}},
         ):
             with self.assertRaises(StrandsException) as error_context:
-                _create_strand_version(token="some-token", json_schema='"{}"', version="0.1.0")
+                _create_strand_version(token="some-token", json_schema={}, version="0.1.0")
 
         self.assertEqual(error_context.exception.args[0][0]["message"], "User is not authenticated.")
 
@@ -89,7 +89,36 @@ class TestCreateStrandVersion(unittest.TestCase):
         ) as mock_execute:
             response = _create_strand_version(
                 token="some-token",
-                json_schema='"{\\"some\\": \\"schema\\"}"',
+                json_schema={"some": "schema"},
+                version="0.1.0",
+            )
+
+        self.assertEqual(response, strand_version_uuid)
+
+        self.assertEqual(
+            mock_execute.mock_calls[0].kwargs["variable_values"],
+            {
+                "token": "some-token",
+                "json_schema": {"some": "schema"},
+                "major": "0",
+                "minor": "1",
+                "patch": "0",
+                "candidate": None,
+                "notes": None,
+            },
+        )
+
+    def test_with_existing_strand_with_candidate_version(self):
+        """Test creating a strand version with a candidate semantic version for an existing strand."""
+        strand_version_uuid = "14aca8b2-fb34-4587-a7ba-290585265d32"
+
+        with patch(
+            "gql.Client.execute",
+            return_value={"createStrandVersionViaToken": {"uuid": strand_version_uuid}},
+        ) as mock_execute:
+            response = _create_strand_version(
+                token="some-token",
+                json_schema={"some": "schema"},
                 version="0.1.0-rc.1",
             )
 
@@ -99,7 +128,7 @@ class TestCreateStrandVersion(unittest.TestCase):
             mock_execute.mock_calls[0].kwargs["variable_values"],
             {
                 "token": "some-token",
-                "json_schema": '"{\\"some\\": \\"schema\\"}"',
+                "json_schema": {"some": "schema"},
                 "major": "0",
                 "minor": "1",
                 "patch": "0",
