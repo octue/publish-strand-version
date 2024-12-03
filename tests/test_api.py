@@ -15,7 +15,7 @@ class TestPublishStrandVersion(unittest.TestCase):
             "gql.Client.execute",
             side_effect=[{"createStrandVersionViaToken": {"uuid": expected_strand_version_uuid}}],
         ):
-            strand_url, strand_version_uri, strand_version_uuid = publish_strand_version(
+            strand_url, strand_version_url, strand_version_uuid = publish_strand_version(
                 token="some-token",
                 account="some",
                 name="strand",
@@ -24,7 +24,7 @@ class TestPublishStrandVersion(unittest.TestCase):
             )
 
         self.assertEqual(strand_url, "https://strands.octue.com/some/strand")
-        self.assertEqual(strand_version_uri, "https://jsonschema.registry.octue.com/some/strand/1.0.0.json")
+        self.assertEqual(strand_version_url, "https://jsonschema.registry.octue.com/some/strand/1.0.0.json")
         self.assertEqual(strand_version_uuid, expected_strand_version_uuid)
 
 

@@ -34,11 +34,11 @@ class TestCLI(unittest.TestCase):
         """
         strand_version_uuid = "14aca8b2-fb34-4587-a7ba-290585265d32"
         strand_url = "strand-url"
-        strand_version_uri = "strand-version-uri"
+        strand_version_url = "strand-version-url"
 
         mock_publish_strand_version = patch(
             "publish_strand_version.cli.publish_strand_version",
-            return_value=(strand_url, strand_version_uri, strand_version_uuid),
+            return_value=(strand_url, strand_version_url, strand_version_uuid),
         )
 
         with patch("builtins.open", mock_open(read_data='{"some": "schema"}')):

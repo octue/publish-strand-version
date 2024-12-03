@@ -3,12 +3,12 @@ A GitHub Action that publishes updates to your JSON schema to the Octue [Strands
 deducing its new semantic version.
 
 ## Usage
-Here's an example workflow that, on push to the `main` branch:
+Below is an example workflow that, on push to the `main` branch:
 - Checks if your schema has changed
 - If it has, asks Strands to deduce the new semantic version
 - Publishes the new schema version to Strands as a new strand version
 
-You can also specify the version using the `version` input.
+You can also specify the version manually using the `version` input.
 
 ```yaml
 name: example-workflow
@@ -16,7 +16,8 @@ name: example-workflow
 on:
   push:
     paths:
-      - relative/path/to/schema.json  # This path is relative to the repository root.
+      # This path is relative to the repository root.
+      - relative/path/to/schema.json
     branches:
       - main
 
@@ -25,24 +26,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Publish strand version
         id: publish
         uses: octue/publish-strand-version@0.1.0
         with:
-          token: ${{ secrets.STRANDS_TOKEN }}  # See below for instructions on getting a token.
+          # See below for instructions on getting a token.
+          token: ${{ secrets.STRANDS_TOKEN }}
           account: your-account-handle
           name: your-strand
-          path: relative/path/to/schema.json  # This is the same path as the `paths` argument further up.
+          # This is the same path as the `paths` argument further up.
+          path: relative/path/to/schema.json
           notes: Some notes.
-          # version: 1.3.2   # Optionally, manually specify a version (or feed in a version calculated elsewhere in the workflow)
+          # version: 1.3.2   # Optionally, manually specify a version.
 
       - name: Print outputs
         run: |
           echo "Strand URL: ${{ steps.publish.outputs.strand_url }}"
-          echo "Strand version URI: ${{ steps.publish.outputs.strand_version_uri }}"
+          echo "Strand version URL: ${{ steps.publish.outputs.strand_version_url }}"
           echo "Strand version UUID: ${{ steps.publish.outputs.strand_version_uuid }}"
 ```
 
@@ -57,8 +60,8 @@ Before using this action, you must have:
 ### Creating a strand access token
 1. Log in to your Strands account
 2. Go to `https://strands.octue.com/<your-handle>/<your-strand>/integrations`
-4. Click "Create an access token". Store your token securely in a password manager.
-5. Add the access token to the GitHub Actions secrets for your repository as a repository secret
+4. Click "Create an access token" and copy the token
+5. Add the access token as a GitHub Actions repository secret:
    - Go to `https://github.com/<your-org>/<your-repository>/settings/secrets/actions`
    - Click "New repository secret"
    - Paste the token and give the secret a name (like `STRANDS_TOKEN` above)
@@ -67,5 +70,5 @@ Before using this action, you must have:
 ### More about access tokens
 - They expire after one year
 - They're specific to the strand you choose - an access token for strand A won't work for strand B
-- You'll only see the token value once, so make sure to record and store it securely
+- You'll only see the token value once, so make sure to store it securely in a password manager if you need to use it again
 - You can revoke an access token at any time by deleting it in your Strands user settings

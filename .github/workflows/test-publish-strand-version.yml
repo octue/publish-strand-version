@@ -29,5 +29,5 @@ jobs:
       - name: Print outputs
         run: |
           echo "Strand URL: ${{ steps.publish.outputs.strand_url }}"
-          echo "Strand version URI: ${{ steps.publish.outputs.strand_version_uri }}"
+          echo "Strand version URL: ${{ steps.publish.outputs.strand_version_url }}"
           echo "Strand version UUID: ${{ steps.publish.outputs.strand_version_uuid }}"

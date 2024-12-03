@@ -55,7 +55,7 @@ def main(argv=None):
         json_schema = json.load(f)
 
     try:
-        strand_url, strand_version_uri, strand_version_uuid = publish_strand_version(
+        strand_url, strand_version_url, strand_version_uuid = publish_strand_version(
             token=args.token,
             account=args.account,
             name=args.name,
@@ -73,7 +73,7 @@ def main(argv=None):
         f.writelines(
             [
                 f"strand_url={strand_url}\n",
-                f"strand_version_uri={strand_version_uri}\n",
+                f"strand_version_url={strand_version_url}\n",
                 f"strand_version_uuid={strand_version_uuid}\n",
             ]
         )

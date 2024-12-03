@@ -43,8 +43,8 @@ def publish_strand_version(token, account, name, json_schema, version=None, note
     )
 
     strand_url = "/".join((STRANDS_FRONTEND_URL, suid))
-    strand_version_uri = "/".join((STRANDS_SCHEMA_REGISTRY_URL, suid, f"{version}.json"))
-    return strand_url, strand_version_uri, strand_version_uuid
+    strand_version_url = "/".join((STRANDS_SCHEMA_REGISTRY_URL, suid, f"{version}.json"))
+    return strand_url, strand_version_url, strand_version_uuid
 
 
 def _suggest_sem_ver(token, base, proposed):
