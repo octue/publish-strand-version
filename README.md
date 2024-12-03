@@ -1,3 +1,6 @@
+> [!WARNING]
+> This repository is currently in beta. Please use in production with caution.
+
 # octue/publish-strand-version (GitHub Action)
 A GitHub Action that publishes updates to your JSON schema to the Octue [Strands](https://strands.octue.com) app,
 deducing its new semantic version.
@@ -31,7 +34,7 @@ jobs:
 
       - name: Publish strand version
         id: publish
-        uses: octue/publish-strand-version@0.1.0
+        uses: octue/publish-strand-version@0.1.0-beta.0
         with:
           # See below for instructions on getting a token.
           token: ${{ secrets.STRANDS_TOKEN }}
