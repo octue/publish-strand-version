@@ -7,7 +7,7 @@
             "type": "integer"
         },
         "again": {
-            "type": "object"
+            "type": "number"
         }
     }
 }
