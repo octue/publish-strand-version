@@ -34,7 +34,7 @@ jobs:
 
       - name: Publish strand version
         id: publish
-        uses: octue/publish-strand-version@0.1.0-beta.0
+        uses: octue/publish-strand-version@0.1.0-beta.1
         with:
           # See below for instructions on getting a token.
           token: ${{ secrets.STRANDS_TOKEN }}
