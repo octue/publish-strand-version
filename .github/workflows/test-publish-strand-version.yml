@@ -18,7 +18,7 @@ jobs:
 
       - name: Publish strand version
         id: publish
-        uses: octue/publish-strand-version@${{ github.head_ref }}
+        uses: octue/publish-strand-version@update-api-usage
         with:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: cortadocodes

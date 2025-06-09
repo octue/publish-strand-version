@@ -8,6 +8,9 @@
         },
         "again": {
             "type": "number"
+        },
+        "something": {
+            "type": "string"
         }
     }
 }
