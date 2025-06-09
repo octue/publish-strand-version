@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "publish-strand-version"
-version = "0.1.0-beta.0"
+version = "0.1.0-beta.1"
 description = "A GitHub action that publishes JSON schemas to the Octue Strands app."
 authors = ["Marcus Lugg <marcus@octue.com>"]
 readme = "README.md"
@@ -11,9 +11,9 @@ publish-strand-version = "publish_strand_version.cli:main"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-poetry = "^1.8.0"
-gql = {version = "^3.5.0", extras = ["requests"]}
-semver = "^3.0.2"
+poetry = "^2"
+gql = {version = "^3.5", extras = ["requests"]}
+semver = "^3.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.8.0"
