@@ -68,9 +68,7 @@ def _suggest_sem_ver(token, base, proposed):
             suggestSemVerViaToken(token: $token, base: $base, proposed: $proposed) {
                 ... on VersionSuggestion {
                     suggestedVersion
-                    isBreaking
-                    isFeature
-                    isPatch
+                    changeType
                 }
                 ... on VersionSuggestionError {
                     type
@@ -95,17 +93,10 @@ def _suggest_sem_ver(token, base, proposed):
     if "messages" in response or "message" in response:
         raise StrandsException(response.get("messages") or response.get("message"))
 
-    if response["isBreaking"]:
-        change_type = "breaking change"
-    elif response["isFeature"]:
-        change_type = "new feature"
-    else:
-        change_type = "patch change"
-
     logger.info(
-        "The suggested semantic version is %s. This represents a %s.",
+        "The suggested semantic version is %s. This represents a %s change.",
         response["suggestedVersion"],
-        change_type,
+        response["changeType"],
     )
 
     return response["suggestedVersion"]
