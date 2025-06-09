@@ -39,22 +39,14 @@ class TestSuggestSemVer(unittest.TestCase):
                 _suggest_sem_ver(
                     token="some-token",
                     base="some/strand",
-                    proposed=json.dumps(json.dumps({"some": "schema"})),
+                    proposed=json.dumps({"some": "schema"}),
                 )
 
         self.assertEqual(error_context.exception.args[0][0]["message"], "User is not authenticated.")
 
     def test_suggesting_sem_ver(self):
-        mock_response = {
-            "suggestSemVerViaToken": {
-                "suggestedVersion": "0.2.0",
-                "isBreaking": False,
-                "isFeature": True,
-                "isPatch": False,
-            }
-        }
-
-        json_schema_encoded = json.dumps(json.dumps({"some": "schema"}))
+        mock_response = {"suggestSemVerViaToken": {"suggestedVersion": "0.2.0", "changeType": "minor"}}
+        json_schema_encoded = json.dumps({"some": "schema"})
 
         with patch("gql.Client.execute", return_value=mock_response) as mock_execute:
             response = _suggest_sem_ver(token="some-token", base="some/strand", proposed=json_schema_encoded)
