@@ -16,6 +16,7 @@ class TestCLI(unittest.TestCase):
                     with self.assertRaises(SystemExit) as e:
                         cli.main(
                             [
+                                "token",
                                 "some",
                                 "strand",
                                 "non-existent-path.json",

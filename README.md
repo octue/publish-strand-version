@@ -2,8 +2,8 @@
 > This repository is currently in beta. Please use in production with caution.
 
 # octue/publish-strand-version (GitHub Action)
-A GitHub Action that publishes updates to your JSON schema to the Octue [Strands](https://strands.octue.com) app,
-deducing its new semantic version.
+A GitHub Action that publishes updates to a JSON schema in a GitHub repository to the Octue
+[Strands](https://strands.octue.com) app and deduces its new semantic version.
 
 ## Usage
 Below is an example workflow that, on push to the `main` branch:
@@ -34,7 +34,7 @@ jobs:
 
       - name: Publish strand version
         id: publish
-        uses: octue/publish-strand-version@0.1.0-beta.0
+        uses: octue/publish-strand-version@0.1.0-beta.1
         with:
           # See below for instructions on getting a token.
           token: ${{ secrets.STRANDS_TOKEN }}
@@ -60,11 +60,11 @@ Before using this action, you must have:
 - Created a strand
 - Created a strand access token and added it to the GitHub Actions secrets (see below)
 
-### Creating a strand access token
+### Creating a strand token
 1. Log in to your Strands account
-2. Go to `https://strands.octue.com/<your-handle>/<your-strand>/integrations`
-4. Click "Create an access token" and copy the token
-5. Add the access token as a GitHub Actions repository secret:
+2. Go to `https://strands.octue.com/<your-handle>/<your-strand>/settings`
+4. Click "Create token" and copy the token
+5. Add the token as a GitHub Actions repository secret:
    - Go to `https://github.com/<your-org>/<your-repository>/settings/secrets/actions`
    - Click "New repository secret"
    - Paste the token and give the secret a name (like `STRANDS_TOKEN` above)
@@ -74,4 +74,4 @@ Before using this action, you must have:
 - They expire after one year
 - They're specific to the strand you choose - an access token for strand A won't work for strand B
 - You'll only see the token value once, so make sure to store it securely in a password manager if you need to use it again
-- You can revoke an access token at any time by deleting it in your Strands user settings
+- You can revoke an access token at any time in your Strands user settings

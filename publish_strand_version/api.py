@@ -8,7 +8,7 @@ import semver
 
 from publish_strand_version.exceptions import StrandsException
 
-STRANDS_API_URL = os.environ.get("STRANDS_API_URL", "https://api.octue.com/graphql/")
+STRANDS_API_URL = os.environ.get("STRANDS_API_URL", "https://api.strands.octue.com/graphql/")
 STRANDS_FRONTEND_URL = os.environ.get("STRANDS_FRONTEND_URL", "https://strands.octue.com")
 STRANDS_SCHEMA_REGISTRY_URL = os.environ.get("STRANDS_SCHEMA_REGISTRY_URL", "https://jsonschema.registry.octue.com")
 
@@ -68,9 +68,7 @@ def _suggest_sem_ver(token, base, proposed):
             suggestSemVerViaToken(token: $token, base: $base, proposed: $proposed) {
                 ... on VersionSuggestion {
                     suggestedVersion
-                    isBreaking
-                    isFeature
-                    isPatch
+                    changeType
                 }
                 ... on VersionSuggestionError {
                     type
@@ -95,17 +93,15 @@ def _suggest_sem_ver(token, base, proposed):
     if "messages" in response or "message" in response:
         raise StrandsException(response.get("messages") or response.get("message"))
 
-    if response["isBreaking"]:
-        change_type = "breaking change"
-    elif response["isFeature"]:
-        change_type = "new feature"
+    if response["changeType"] == "equal":
+        a_or_an = " an "
     else:
-        change_type = "patch change"
+        a_or_an = " a "
 
     logger.info(
-        "The suggested semantic version is %s. This represents a %s.",
+        "The suggested semantic version is %s. This represents" + a_or_an + "%s change.",
         response["suggestedVersion"],
-        change_type,
+        response["changeType"],
     )
 
     return response["suggestedVersion"]
