@@ -93,12 +93,12 @@ def _suggest_sem_ver(token, base, proposed):
     if "messages" in response or "message" in response:
         raise StrandsException(response.get("messages") or response.get("message"))
 
-    logger.info(
-        "The suggested semantic version is %s. This represents a %s change.",
-        response["suggestedVersion"],
-        response["changeType"],
-    )
+    if response["changeType"] == "equal":
+        log_message = "The suggested semantic version is %s. This represents an %s change."
+    else:
+        log_message = "The suggested semantic version is %s. This represents a %s change."
 
+    logger.info(log_message, response["suggestedVersion"], response["changeType"])
     return response["suggestedVersion"]
 
 
