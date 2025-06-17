@@ -9,5 +9,6 @@
         "again": {
             "type": "number"
         }
-    }
+    },
+    "required": ["test"]
 }
