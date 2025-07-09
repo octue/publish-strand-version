@@ -12,7 +12,7 @@ Here's an example workflow that, on push to the `main` branch:
 - Publishes the new schema version to Strands
 
 You can also:
-- Specify the version manually using the `version` input
+- Specify the version manually
 - Add notes about the schema (e.g. release notes; markdown is optional but supported!)
 - Disallow beta versioning (versions < 1.0.0)
 
@@ -45,9 +45,10 @@ jobs:
           name: your-strand
           # This is the same path as the `paths` argument further up.
           path: relative/path/to/schema.json
-          notes: Some notes.
-          # version: 1.3.2     # Optionally, manually specify a version.
-          # allow_beta: false  # Optionally, disallow beta versioning (versions < 1.0.0)
+          ### Optional arguments ###
+          # notes: Some notes.   # Add some release notes
+          # version: 1.3.2       # Manually specify a version
+          # allow_beta: false    # Allow/disallow beta versioning (versions < 1.0.0)
 
       - name: Print outputs
         run: |
