@@ -128,9 +128,9 @@ def _create_strand_version(token, account, name, json_schema, version, notes=Non
         "account": account,
         "name": name,
         "json_schema": json_schema,
-        "major": str(semantic_version.major),
-        "minor": str(semantic_version.minor),
-        "patch": str(semantic_version.patch),
+        "major": semantic_version.major,
+        "minor": semantic_version.minor,
+        "patch": semantic_version.patch,
         "candidate": semantic_version.prerelease,
         "notes": notes,
     }
@@ -142,9 +142,9 @@ def _create_strand_version(token, account, name, json_schema, version, notes=Non
             $account: String!,
             $name: String!,
             $json_schema: JSON!,
-            $major: String!,
-            $minor: String!,
-            $patch: String!,
+            $major: Int!,
+            $minor: Int!,
+            $patch: Int!,
             $candidate: String,
             $notes: String
         ) {
