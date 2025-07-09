@@ -40,6 +40,7 @@ def main(argv=None):
     )
     parser.add_argument("version", nargs="?", help="The semantic version to give the new strand version.")
     parser.add_argument("notes", nargs="?", default=None, help="Any notes to add to the strand version.")
+    parser.add_argument("allow_beta", nargs="?", default=True, help="")
 
     parser.add_argument(
         "--version",
@@ -50,6 +51,11 @@ def main(argv=None):
     )
 
     args = parser.parse_args(argv)
+
+    if args.allow_beta.lower() == "true":
+        allow_beta = True
+    else:
+        allow_beta = False
 
     with open(args.path) as f:
         json_schema = json.load(f)
@@ -62,6 +68,7 @@ def main(argv=None):
             json_schema=json_schema,
             version=args.version,
             notes=args.notes,
+            allow_beta=allow_beta,
         )
 
     except StrandsException:
