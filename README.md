@@ -2,16 +2,19 @@
 > This repository is currently in beta. Please use in production with caution.
 
 # octue/publish-strand-version (GitHub Action)
-A GitHub Action that publishes updates to a JSON schema in a GitHub repository to the Octue
-[Strands](https://strands.octue.com) app and deduces its new semantic version.
+A GitHub Action that publishes updated JSON schemas from a GitHub repository to the Octue
+[Strands](https://strands.octue.com) app and deduces their new semantic versions.
 
 ## Usage
-Below is an example workflow that, on push to the `main` branch:
-- Checks if your schema has changed
+Here's an example workflow that, on push to the `main` branch:
+- Checks if the schema has changed
 - If it has, asks Strands to deduce the new semantic version
-- Publishes the new schema version to Strands as a new strand version
+- Publishes the new schema version to Strands
 
-You can also specify the version manually using the `version` input.
+You can also:
+- Specify the version manually
+- Add notes about the schema (e.g. release notes; markdown is optional but supported!)
+- Disallow beta versioning (versions < 1.0.0)
 
 ```yaml
 name: example-workflow
@@ -34,7 +37,7 @@ jobs:
 
       - name: Publish strand version
         id: publish
-        uses: octue/publish-strand-version@0.1.0-beta.1
+        uses: octue/publish-strand-version@0.1.0
         with:
           # See below for instructions on getting a token.
           token: ${{ secrets.STRANDS_TOKEN }}
@@ -42,8 +45,10 @@ jobs:
           name: your-strand
           # This is the same path as the `paths` argument further up.
           path: relative/path/to/schema.json
-          notes: Some notes.
-          # version: 1.3.2   # Optionally, manually specify a version.
+          ### Optional arguments ###
+          # notes: Some notes.   # Add some release notes
+          # version: 1.3.2       # Manually specify a version
+          # allow_beta: false    # Allow/disallow beta versioning (versions < 1.0.0)
 
       - name: Print outputs
         run: |

@@ -26,6 +26,10 @@ inputs:
     description: 'Any notes to add to the strand version.'
     required: false
     default: ''
+  allow_beta:
+    description: 'If `false` and the base version is a beta version (< 1.0.0), interpret major/breaking changes as increasing the version to the lowest non-beta version (1.0.0)'
+    required: false
+    default: 'true'
 
 outputs:
   strand_url:
@@ -37,7 +41,7 @@ outputs:
 
 runs:
    using: 'docker'
-   image: 'docker://octue/publish-strand-version:0.1.0-beta.1'
+   image: 'docker://octue/publish-strand-version:0.1.0'
    args:
      - ${{ inputs.token }}
      - ${{ inputs.account }}
@@ -45,3 +49,4 @@ runs:
      - ${{ inputs.path }}
      - ${{ inputs.version }}
      - ${{ inputs.notes }}
+     - ${{ inputs.allow_beta }}

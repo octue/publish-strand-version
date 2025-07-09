@@ -40,6 +40,7 @@ class TestSuggestSemVer(unittest.TestCase):
                     token="some-token",
                     base="some/strand",
                     proposed=json.dumps({"some": "schema"}),
+                    allow_beta=True,
                 )
 
         self.assertEqual(error_context.exception.args[0][0]["message"], "User is not authenticated.")
@@ -49,13 +50,18 @@ class TestSuggestSemVer(unittest.TestCase):
         json_schema_encoded = json.dumps({"some": "schema"})
 
         with patch("gql.Client.execute", return_value=mock_response) as mock_execute:
-            response = _suggest_sem_ver(token="some-token", base="some/strand", proposed=json_schema_encoded)
+            response = _suggest_sem_ver(
+                token="some-token",
+                base="some/strand",
+                proposed=json_schema_encoded,
+                allow_beta=True,
+            )
 
         self.assertEqual(response, "0.2.0")
 
         self.assertEqual(
             mock_execute.mock_calls[0].kwargs["variable_values"],
-            {"token": "some-token", "base": "some/strand", "proposed": json_schema_encoded},
+            {"token": "some-token", "base": "some/strand", "proposed": json_schema_encoded, "allowBeta": True},
         )
 
 
@@ -102,9 +108,9 @@ class TestCreateStrandVersion(unittest.TestCase):
                 "account": "some-user",
                 "name": "some-strand",
                 "json_schema": {"some": "schema"},
-                "major": "0",
-                "minor": "1",
-                "patch": "0",
+                "major": 0,
+                "minor": 1,
+                "patch": 0,
                 "candidate": None,
                 "notes": None,
             },
@@ -135,9 +141,9 @@ class TestCreateStrandVersion(unittest.TestCase):
                 "account": "some-user",
                 "name": "some-strand",
                 "json_schema": {"some": "schema"},
-                "major": "0",
-                "minor": "1",
-                "patch": "0",
+                "major": 0,
+                "minor": 1,
+                "patch": 0,
                 "candidate": "rc.1",
                 "notes": None,
             },

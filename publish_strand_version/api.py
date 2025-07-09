@@ -17,7 +17,7 @@ transport = RequestsHTTPTransport(url=STRANDS_API_URL)
 client = gql.Client(transport=transport, fetch_schema_from_transport=True)
 
 
-def publish_strand_version(token, account, name, json_schema, version=None, notes=None):
+def publish_strand_version(token, account, name, json_schema, version=None, notes=None, allow_beta=True):
     """Publish a strand version for an existing strand.
 
     :param str token: a Strands access token with permission to add a new strand version to a specific strand
@@ -26,12 +26,13 @@ def publish_strand_version(token, account, name, json_schema, version=None, note
     :param dict json_schema: the JSON schema to add to the strand as a strand version
     :param str version: the semantic version to give the strand version
     :param str notes: any notes to associate with the strand version
+    :param bool allow_beta: If `false` and the base version is a beta version (< 1.0.0), interpret major/breaking changes as increasing the version to the lowest non-beta version (1.0.0)
     :return (str, str, str):
     """
     suid = f"{account}/{name}"
 
     if not version:
-        version = _suggest_sem_ver(token=token, base=suid, proposed=json.dumps(json_schema))
+        version = _suggest_sem_ver(token=token, base=suid, proposed=json.dumps(json_schema), allow_beta=allow_beta)
 
     strand_version_uuid = _create_strand_version(
         token=token,
@@ -47,16 +48,17 @@ def publish_strand_version(token, account, name, json_schema, version=None, note
     return strand_url, strand_version_url, strand_version_uuid
 
 
-def _suggest_sem_ver(token, base, proposed):
+def _suggest_sem_ver(token, base, proposed, allow_beta):
     """Query the GraphQL endpoint for a suggested semantic version for the proposed schema relative to a base schema.
 
     :param str token: a Strands access token with any scope
     :param str base: the base schema as a strand unique identifier (SUID) of an existing strand
     :param str proposed: the proposed schema as a JSON-encoded string
+    :param bool allow_beta: If `false` and the base version is a beta version (< 1.0.0), interpret major/breaking changes as increasing the version to the lowest non-beta version (1.0.0)
     :raises publish_strand_version.exceptions.StrandsException: if the query fails for any reason
     :return str: the suggested semantic version for the proposed schema
     """
-    parameters = {"token": token, "base": base, "proposed": proposed}
+    parameters = {"token": token, "base": base, "proposed": proposed, "allowBeta": allow_beta}
 
     query = gql.gql(
         """
@@ -64,8 +66,9 @@ def _suggest_sem_ver(token, base, proposed):
             $token: String!,
             $base: String!,
             $proposed: String!,
+            $allowBeta: Boolean!
         ){
-            suggestSemVerViaToken(token: $token, base: $base, proposed: $proposed) {
+            suggestSemVerViaToken(token: $token, base: $base, proposed: $proposed, allowBeta: $allowBeta) {
                 ... on VersionSuggestion {
                     suggestedVersion
                     changeType
@@ -125,9 +128,9 @@ def _create_strand_version(token, account, name, json_schema, version, notes=Non
         "account": account,
         "name": name,
         "json_schema": json_schema,
-        "major": str(semantic_version.major),
-        "minor": str(semantic_version.minor),
-        "patch": str(semantic_version.patch),
+        "major": semantic_version.major,
+        "minor": semantic_version.minor,
+        "patch": semantic_version.patch,
         "candidate": semantic_version.prerelease,
         "notes": notes,
     }
@@ -139,9 +142,9 @@ def _create_strand_version(token, account, name, json_schema, version, notes=Non
             $account: String!,
             $name: String!,
             $json_schema: JSON!,
-            $major: String!,
-            $minor: String!,
-            $patch: String!,
+            $major: Int!,
+            $minor: Int!,
+            $patch: Int!,
             $candidate: String,
             $notes: String
         ) {
