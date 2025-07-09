@@ -40,7 +40,8 @@ def main(argv=None):
     )
     parser.add_argument("version", nargs="?", help="The semantic version to give the new strand version.")
     parser.add_argument("notes", nargs="?", default=None, help="Any notes to add to the strand version.")
-    parser.add_argument("allow_beta", nargs="?", default=True, help="")
+    # The string "true" is used here as GitHub Actions input defaults don't support booleans.
+    parser.add_argument("allow_beta", nargs="?", default="true", help="")
 
     parser.add_argument(
         "--version",
