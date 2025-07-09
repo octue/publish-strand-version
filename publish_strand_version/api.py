@@ -26,7 +26,7 @@ def publish_strand_version(token, account, name, json_schema, version=None, note
     :param dict json_schema: the JSON schema to add to the strand as a strand version
     :param str version: the semantic version to give the strand version
     :param str notes: any notes to associate with the strand version
-    :param bool allow_beta:
+    :param bool allow_beta: If `false` and the base version is a beta version (< 1.0.0), interpret major/breaking changes as increasing the version to the lowest non-beta version (1.0.0)
     :return (str, str, str):
     """
     suid = f"{account}/{name}"
@@ -54,7 +54,7 @@ def _suggest_sem_ver(token, base, proposed, allow_beta):
     :param str token: a Strands access token with any scope
     :param str base: the base schema as a strand unique identifier (SUID) of an existing strand
     :param str proposed: the proposed schema as a JSON-encoded string
-    :param bool allow_beta:
+    :param bool allow_beta: If `false` and the base version is a beta version (< 1.0.0), interpret major/breaking changes as increasing the version to the lowest non-beta version (1.0.0)
     :raises publish_strand_version.exceptions.StrandsException: if the query fails for any reason
     :return str: the suggested semantic version for the proposed schema
     """
