@@ -49,4 +49,4 @@ runs:
      - ${{ inputs.path }}
      - ${{ inputs.version }}
      - ${{ inputs.notes }}
-     - ${{ input.allow_beta }}
+     - ${{ inputs.allow_beta }}
