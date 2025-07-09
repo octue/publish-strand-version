@@ -74,6 +74,7 @@ class TestCLI(unittest.TestCase):
 
         message = mock_stderr.method_calls[0].args[0]
         self.assertIn("STRAND VERSION PUBLISHING SUCCEEDED:", message)
+        self.assertIn(strand_version_url, message)
         self.assertIn(strand_version_uuid, message)
 
         message = mock_stdout.method_calls[0].args[0]

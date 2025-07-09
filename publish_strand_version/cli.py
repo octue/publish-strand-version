@@ -86,7 +86,13 @@ def main(argv=None):
             ]
         )
 
-    print(f"{GREEN}STRAND VERSION PUBLISHING SUCCEEDED:{NO_COLOUR} {strand_version_uuid}.", file=sys.stderr)
+    print(
+        f"{GREEN}STRAND VERSION PUBLISHING SUCCEEDED:{NO_COLOUR}\n"
+        f"- Strand version URL: {strand_version_url}\n"
+        f"- Strand version UUID: {strand_version_uuid}.\n",
+        file=sys.stderr,
+    )
+
     print(strand_version_uuid)
     sys.exit(0)
 
