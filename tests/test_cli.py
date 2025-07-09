@@ -67,6 +67,7 @@ class TestCLI(unittest.TestCase):
             json_schema={"some": "schema"},
             version="1.0.0-rc.1",
             notes="Some notes.",
+            allow_beta=True,
         )
 
         self.assertEqual(e.exception.code, 0)
