@@ -11,5 +11,5 @@
             "type": "number"
         }
     },
-    "required": ["test", "another", "again"]
+    "required": ["test", "another"]
 }
