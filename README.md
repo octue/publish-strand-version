@@ -37,7 +37,7 @@ jobs:
 
       - name: Publish strand version
         id: publish
-        uses: octue/publish-strand-version@0.1.0
+        uses: octue/publish-strand-version@0.2.0
         with:
           # See below for instructions on getting a token.
           token: ${{ secrets.STRANDS_TOKEN }}
@@ -49,6 +49,7 @@ jobs:
           # notes: Some notes.   # Add some release notes
           # version: 1.3.2       # Manually specify a version
           # allow_beta: false    # Allow/disallow beta versioning (versions < 1.0.0)
+          # suggest_only: false  # Choose whether to publish or just suggest the new version number
 
       - name: Print outputs
         run: |
