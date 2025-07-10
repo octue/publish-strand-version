@@ -47,18 +47,17 @@ class TestCLI(unittest.TestCase):
                 with tempfile.NamedTemporaryFile() as temporary_file:
                     with patch.dict(os.environ, {"GITHUB_OUTPUT": temporary_file.name}):
                         with patch("sys.stderr") as mock_stderr:
-                            with patch("sys.stdout") as mock_stdout:
-                                with self.assertRaises(SystemExit) as e:
-                                    cli.main(
-                                        [
-                                            "some-token",
-                                            "some",
-                                            "strand",
-                                            "non-existent-path.json",
-                                            "1.0.0-rc.1",
-                                            "Some notes.",
-                                        ]
-                                    )
+                            with self.assertRaises(SystemExit) as e:
+                                cli.main(
+                                    [
+                                        "some-token",
+                                        "some",
+                                        "strand",
+                                        "non-existent-path.json",
+                                        "1.0.0-rc.1",
+                                        "Some notes.",
+                                    ]
+                                )
 
         mock_publish_strand_version.assert_called_with(
             token="some-token",
@@ -74,9 +73,6 @@ class TestCLI(unittest.TestCase):
         self.assertEqual(e.exception.code, 0)
 
         message = mock_stderr.method_calls[0].args[0]
-        self.assertIn("STRAND VERSION PUBLISHING SUCCEEDED:", message)
+        self.assertIn("STRAND VERSION PUBLISHING SUCCEEDED", message)
         self.assertIn(strand_version_url, message)
         self.assertIn(strand_version_uuid, message)
-
-        message = mock_stdout.method_calls[0].args[0]
-        self.assertEqual(message, strand_version_uuid)

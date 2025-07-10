@@ -21,8 +21,8 @@ logging.basicConfig(
 
 
 def main(argv=None):
-    """Publish a strand version for a new or existing strand. If this succeeds, exit successfully with an exit code of
-    0; if it doesn't, exit with an exit code of 1.
+    """Publish a new strand version for an existing strand, or just suggest the new semantic version. If this succeeds,
+    exit successfully with an exit code of 0; if it doesn't, exit with an exit code of 1.
 
     :return None:
     """
@@ -104,7 +104,6 @@ def main(argv=None):
         file=sys.stderr,
     )
 
-    print(strand_version_uuid)
     sys.exit(0)
 
 
