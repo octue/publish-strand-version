@@ -50,6 +50,7 @@ def publish_strand_version(
         version = _suggest_sem_ver(token=token, base=suid, proposed=json.dumps(json_schema), allow_beta=allow_beta)
 
     if suggest_only:
+        logger.info("Suggest-only mode enabled - strand version will not be published.")
         return (None, None, None, version)
 
     strand_version_uuid = _create_strand_version(
