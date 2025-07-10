@@ -25,9 +25,3 @@ jobs:
           notes: Some test notes.
           allow_beta: true
           suggest_only: true
-
-      - name: Print outputs
-        run: |
-          echo "Strand URL: ${{ steps.publish.outputs.strand_url }}"
-          echo "Strand version URL: ${{ steps.publish.outputs.strand_version_url }}"
-          echo "Strand version UUID: ${{ steps.publish.outputs.strand_version_uuid }}"
