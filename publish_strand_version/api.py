@@ -4,6 +4,7 @@ import os
 
 import gql
 from gql.transport.requests import RequestsHTTPTransport
+from gql.transport.requests import log as requests_logger
 import semver
 
 from publish_strand_version.exceptions import StrandsException
@@ -11,6 +12,9 @@ from publish_strand_version.exceptions import StrandsException
 STRANDS_API_URL = os.environ.get("STRANDS_API_URL", "https://api.strands.octue.com/graphql/")
 STRANDS_FRONTEND_URL = os.environ.get("STRANDS_FRONTEND_URL", "https://strands.octue.com")
 STRANDS_SCHEMA_REGISTRY_URL = os.environ.get("STRANDS_SCHEMA_REGISTRY_URL", "https://jsonschema.registry.octue.com")
+
+# Suppress `gql.transport.requests` logs.
+requests_logger.setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 transport = RequestsHTTPTransport(url=STRANDS_API_URL)
