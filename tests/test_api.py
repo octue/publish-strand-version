@@ -28,6 +28,43 @@ class TestPublishStrandVersion(unittest.TestCase):
         self.assertEqual(strand_version_uuid, expected_strand_version_uuid)
         self.assertEqual(suggested_version, "1.0.0")
 
+    def test_error_raised_if_version_manually_set_in_suggest_only_mode(self):
+        """Test that an error is raised if the `version` argument is set when `suggest_only=True`."""
+        with self.assertRaises(ValueError) as error_context:
+            publish_strand_version(
+                token="some-token",
+                account="some",
+                name="strand",
+                json_schema={"some": "schema"},
+                version="1.0.0",
+                suggest_only=True,
+            )
+
+        self.assertEqual(
+            error_context.exception.args[0],
+            ("The `version` argument cannot be set while `suggest_only=True`."),
+        )
+
+    def test_suggest_only_mode(self):
+        """Test that the strand creation mutation is not used when suggest-only mode is enabled."""
+        mock_response = {"suggestSemVerViaToken": {"suggestedVersion": "0.2.0", "changeType": "minor"}}
+
+        with patch("publish_strand_version.api._create_strand_version") as mock_create_strand_version:
+            with patch("gql.Client.execute", return_value=mock_response):
+                strand_url, strand_version_url, strand_version_uuid, suggested_version = publish_strand_version(
+                    token="some-token",
+                    account="some",
+                    name="strand",
+                    json_schema={"some": "schema"},
+                    suggest_only=True,
+                )
+
+        mock_create_strand_version.assert_not_called()
+        self.assertEqual(suggested_version, "0.2.0")
+        self.assertIsNone(strand_url)
+        self.assertIsNone(strand_version_url)
+        self.assertIsNone(strand_version_uuid)
+
 
 class TestSuggestSemVer(unittest.TestCase):
     def test_error_raised_if_unauthenticated(self):
