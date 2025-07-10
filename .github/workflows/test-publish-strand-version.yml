@@ -2,8 +2,6 @@ name: test-publish-strand-version
 
 on:
   push:
-    paths:
-      - tests/schema.json
     branches-ignore:
       - main
 
@@ -18,16 +16,12 @@ jobs:
 
       - name: Publish strand version
         id: publish
-        uses: octue/publish-strand-version@0.1.0
+        uses: octue/publish-strand-version@0.2.0
         with:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: cortadocodes
           name: test-publish-strand-version
           path: tests/schema.json
           notes: Some test notes.
-
-      - name: Print outputs
-        run: |
-          echo "Strand URL: ${{ steps.publish.outputs.strand_url }}"
-          echo "Strand version URL: ${{ steps.publish.outputs.strand_version_url }}"
-          echo "Strand version UUID: ${{ steps.publish.outputs.strand_version_uuid }}"
+          allow_beta: true
+          suggest_only: true

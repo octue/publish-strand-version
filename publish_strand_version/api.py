@@ -4,6 +4,7 @@ import os
 
 import gql
 from gql.transport.requests import RequestsHTTPTransport
+from gql.transport.requests import log as requests_logger
 import semver
 
 from publish_strand_version.exceptions import StrandsException
@@ -12,13 +13,25 @@ STRANDS_API_URL = os.environ.get("STRANDS_API_URL", "https://api.strands.octue.c
 STRANDS_FRONTEND_URL = os.environ.get("STRANDS_FRONTEND_URL", "https://strands.octue.com")
 STRANDS_SCHEMA_REGISTRY_URL = os.environ.get("STRANDS_SCHEMA_REGISTRY_URL", "https://jsonschema.registry.octue.com")
 
+# Suppress `gql.transport.requests` logs.
+requests_logger.setLevel(logging.WARNING)
+
 logger = logging.getLogger(__name__)
 transport = RequestsHTTPTransport(url=STRANDS_API_URL)
 client = gql.Client(transport=transport, fetch_schema_from_transport=True)
 
 
-def publish_strand_version(token, account, name, json_schema, version=None, notes=None, allow_beta=True):
-    """Publish a strand version for an existing strand.
+def publish_strand_version(
+    token,
+    account,
+    name,
+    json_schema,
+    version=None,
+    notes=None,
+    allow_beta=True,
+    suggest_only=False,
+):
+    """Publish a new strand version for an existing strand, or just suggest its semantic version.
 
     :param str token: a Strands access token with permission to add a new strand version to a specific strand
     :param str account: the handle of the account the strand belongs to
@@ -26,13 +39,23 @@ def publish_strand_version(token, account, name, json_schema, version=None, note
     :param dict json_schema: the JSON schema to add to the strand as a strand version
     :param str version: the semantic version to give the strand version
     :param str notes: any notes to associate with the strand version
-    :param bool allow_beta: If `false` and the base version is a beta version (< 1.0.0), interpret major/breaking changes as increasing the version to the lowest non-beta version (1.0.0)
-    :return (str, str, str):
+    :param bool allow_beta: if `False` and the base version is a beta version (< 1.0.0), interpret major/breaking changes as increasing the version to the lowest non-beta version (1.0.0)
+    :param bool suggest_only: if `True`, just return the suggested new version
+    :return (str|None, str|None, str|None, str):
     """
+    if suggest_only and version:
+        raise ValueError("The `version` argument cannot be set while `suggest_only=True`.")
+
     suid = f"{account}/{name}"
 
-    if not version:
+    if version:
+        logger.info("Skipping version suggestion (reason: semantic version manually specified)")
+    else:
         version = _suggest_sem_ver(token=token, base=suid, proposed=json.dumps(json_schema), allow_beta=allow_beta)
+
+    if suggest_only:
+        logger.info("Suggest-only mode enabled - strand version will not be published.")
+        return (None, None, None, version)
 
     strand_version_uuid = _create_strand_version(
         token=token,
@@ -45,7 +68,7 @@ def publish_strand_version(token, account, name, json_schema, version=None, note
 
     strand_url = "/".join((STRANDS_FRONTEND_URL, suid))
     strand_version_url = "/".join((STRANDS_SCHEMA_REGISTRY_URL, suid, f"{version}.json"))
-    return strand_url, strand_version_url, strand_version_uuid
+    return (strand_url, strand_version_url, strand_version_uuid, version)
 
 
 def _suggest_sem_ver(token, base, proposed, allow_beta):
@@ -54,7 +77,7 @@ def _suggest_sem_ver(token, base, proposed, allow_beta):
     :param str token: a Strands access token with any scope
     :param str base: the base schema as a strand unique identifier (SUID) of an existing strand
     :param str proposed: the proposed schema as a JSON-encoded string
-    :param bool allow_beta: If `false` and the base version is a beta version (< 1.0.0), interpret major/breaking changes as increasing the version to the lowest non-beta version (1.0.0)
+    :param bool allow_beta: if `False` and the base version is a beta version (< 1.0.0), interpret major/breaking changes as increasing the version to the lowest non-beta version (1.0.0)
     :raises publish_strand_version.exceptions.StrandsException: if the query fails for any reason
     :return str: the suggested semantic version for the proposed schema
     """
@@ -97,16 +120,13 @@ def _suggest_sem_ver(token, base, proposed, allow_beta):
         raise StrandsException(response.get("messages") or response.get("message"))
 
     if response["changeType"] == "equal":
-        a_or_an = " an "
+        message = "The schema hasn't changed. The suggested version is %s."
+        message_args = [response["suggestedVersion"]]
     else:
-        a_or_an = " a "
+        message = "The suggested semantic version is %s. This represents a %s change."
+        message_args = [response["suggestedVersion"], response["changeType"]]
 
-    logger.info(
-        "The suggested semantic version is %s. This represents" + a_or_an + "%s change.",
-        response["suggestedVersion"],
-        response["changeType"],
-    )
-
+    logger.info(message, *message_args)
     return response["suggestedVersion"]
 
 
