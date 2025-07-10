@@ -39,6 +39,9 @@ def publish_strand_version(
     :param bool suggest_only: if `True`, just return the suggested new version
     :return (str|None, str|None, str|None, str):
     """
+    if suggest_only and version:
+        raise ValueError("The `version` argument cannot be set while `suggest_only=True`.")
+
     suid = f"{account}/{name}"
 
     if version:
