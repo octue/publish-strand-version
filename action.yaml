@@ -30,6 +30,10 @@ inputs:
     description: 'If `false` and the base version is a beta version (< 1.0.0), interpret major/breaking changes as increasing the version to the lowest non-beta version (1.0.0)'
     required: false
     default: 'true'
+  suggest_only:
+    description: "If `True`, don't publish and just return the suggested new version"
+    required: false
+    default: 'false'
 
 outputs:
   strand_url:
@@ -50,3 +54,4 @@ runs:
      - ${{ inputs.version }}
      - ${{ inputs.notes }}
      - ${{ inputs.allow_beta }}
+     - ${{ inputs.suggest_only }}

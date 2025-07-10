@@ -40,8 +40,9 @@ def main(argv=None):
     )
     parser.add_argument("version", nargs="?", help="The semantic version to give the new strand version.")
     parser.add_argument("notes", nargs="?", default=None, help="Any notes to add to the strand version.")
-    # The string "true" is used here as GitHub Actions input defaults don't support booleans.
+    # Strings instead of booleans are used below as GitHub Actions input defaults don't support booleans.
     parser.add_argument("allow_beta", nargs="?", default="true", help="")
+    parser.add_argument("suggest_only", nargs="?", default="false", help="")
 
     parser.add_argument(
         "--version",
@@ -58,11 +59,18 @@ def main(argv=None):
     else:
         allow_beta = False
 
+    if args.suggest_only.lower() == "true":
+        suggest_only = True
+        mode = "SUGGESTION"
+    else:
+        suggest_only = False
+        mode = "PUBLISHING"
+
     with open(args.path) as f:
         json_schema = json.load(f)
 
     try:
-        strand_url, strand_version_url, strand_version_uuid = publish_strand_version(
+        strand_url, strand_version_url, strand_version_uuid, suggested_version = publish_strand_version(
             token=args.token,
             account=args.account,
             name=args.name,
@@ -70,10 +78,11 @@ def main(argv=None):
             version=args.version,
             notes=args.notes,
             allow_beta=allow_beta,
+            suggest_only=suggest_only,
         )
 
     except StrandsException:
-        print(f"{RED}STRAND VERSION PUBLISHING FAILED.{NO_COLOUR}", file=sys.stderr)
+        print(f"{RED}STRAND VERSION {mode} FAILED.{NO_COLOUR}", file=sys.stderr)
         sys.exit(1)
 
     # Write outputs to GitHub outputs file for action.
@@ -83,13 +92,15 @@ def main(argv=None):
                 f"strand_url={strand_url}\n",
                 f"strand_version_url={strand_version_url}\n",
                 f"strand_version_uuid={strand_version_uuid}\n",
+                f"suggested_version={suggested_version}\n",
             ]
         )
 
     print(
-        f"{GREEN}STRAND VERSION PUBLISHING SUCCEEDED:{NO_COLOUR}\n"
+        f"{GREEN}STRAND VERSION {mode} SUCCEEDED:{NO_COLOUR}\n"
         f"- Strand version URL: {strand_version_url}\n"
-        f"- Strand version UUID: {strand_version_uuid}.\n",
+        f"- Strand version UUID: {strand_version_uuid}\n"
+        f"- Suggested version: {suggested_version}\n",
         file=sys.stderr,
     )
 
