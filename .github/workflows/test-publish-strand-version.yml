@@ -16,7 +16,7 @@ jobs:
 
       - name: Publish strand version
         id: publish
-        uses: octue/publish-strand-version@0.2.0
+        uses: octue/publish-strand-version@add-suggest-only-mode
         with:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: cortadocodes
