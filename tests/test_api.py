@@ -42,11 +42,11 @@ class TestPublishStrandVersion(unittest.TestCase):
 
         self.assertEqual(
             error_context.exception.args[0],
-            ("The `version` argument cannot be set while `suggest_only=True`."),
+            "The `version` argument cannot be set while `suggest_only=True`.",
         )
 
     def test_suggest_only_mode(self):
-        """Test that the strand creation mutation is not used when suggest-only mode is enabled."""
+        """Test that the strand version creation mutation is not used when suggest-only mode is enabled."""
         mock_response = {"suggestSemVerViaToken": {"suggestedVersion": "0.2.0", "changeType": "minor"}}
 
         with patch("publish_strand_version.api._create_strand_version") as mock_create_strand_version:
