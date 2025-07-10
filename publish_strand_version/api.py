@@ -41,7 +41,9 @@ def publish_strand_version(
     """
     suid = f"{account}/{name}"
 
-    if not version:
+    if version:
+        logger.info("Skipping version suggestion (reason: semantic version manually specified)")
+    else:
         version = _suggest_sem_ver(token=token, base=suid, proposed=json.dumps(json_schema), allow_beta=allow_beta)
 
     if suggest_only:
