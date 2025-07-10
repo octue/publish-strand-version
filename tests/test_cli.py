@@ -46,7 +46,7 @@ class TestCLI(unittest.TestCase):
             with mock_publish_strand_version as mock_publish_strand_version:
                 with tempfile.NamedTemporaryFile() as temporary_file:
                     with patch.dict(os.environ, {"GITHUB_OUTPUT": temporary_file.name}):
-                        with patch("sys.stderr") as mock_stderr:
+                        with patch("sys.stdout") as mock_stdout:
                             with self.assertRaises(SystemExit) as e:
                                 cli.main(
                                     [
@@ -72,7 +72,7 @@ class TestCLI(unittest.TestCase):
 
         self.assertEqual(e.exception.code, 0)
 
-        message = mock_stderr.method_calls[0].args[0]
+        message = mock_stdout.method_calls[0].args[0]
         self.assertIn("STRAND VERSION PUBLISHING SUCCEEDED", message)
         self.assertIn(strand_version_url, message)
         self.assertIn(strand_version_uuid, message)

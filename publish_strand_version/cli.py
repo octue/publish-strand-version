@@ -101,7 +101,6 @@ def main(argv=None):
         f"- Strand version URL: {strand_version_url}\n"
         f"- Strand version UUID: {strand_version_uuid}\n"
         f"- Suggested version: {suggested_version}\n",
-        file=sys.stderr,
     )
 
     sys.exit(0)
