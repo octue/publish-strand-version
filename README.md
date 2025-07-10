@@ -58,7 +58,7 @@ jobs:
           echo "Strand version UUID: ${{ steps.publish.outputs.strand_version_uuid }}"
 ```
 
-See a working example [here](.github/workflows/test-publish-strand-version.yml).
+See a working example [here](examples/publish-strand-version.yml).
 
 ## Prerequisites
 Before using this action, you must have:

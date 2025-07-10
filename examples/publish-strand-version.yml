@@ -1,7 +1,9 @@
-name: test-publish-strand-version
+name: publish-strand-version-example
 
 on:
   push:
+    paths:
+      - tests/schema.json
     branches-ignore:
       - main
 
@@ -16,7 +18,7 @@ jobs:
 
       - name: Publish strand version
         id: publish
-        uses: octue/publish-strand-version@0.2.0
+        uses: octue/publish-strand-version@add-allow-beta-option
         with:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: cortadocodes
