@@ -52,7 +52,7 @@ jobs:
           # suggest_only: false  # Choose whether to publish or just suggest the new version number
 ```
 
-See a working example [here](examples/publish-strand-version.yml).
+See our test workflow [here](.github/workflows/test-publish-strand-version.yml).
 
 ## Outputs
 The available outputs from the action are:
