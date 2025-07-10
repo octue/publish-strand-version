@@ -31,7 +31,7 @@ inputs:
     required: false
     default: 'true'
   suggest_only:
-    description: "If `True`, don't publish and just return the suggested new version"
+    description: "If `true`, don't publish and just return the suggested new version"
     required: false
     default: 'false'
 
