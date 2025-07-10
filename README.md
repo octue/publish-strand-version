@@ -50,15 +50,16 @@ jobs:
           # version: 1.3.2       # Manually specify a version
           # allow_beta: false    # Allow/disallow beta versioning (versions < 1.0.0)
           # suggest_only: false  # Choose whether to publish or just suggest the new version number
-
-      - name: Print outputs
-        run: |
-          echo "Strand URL: ${{ steps.publish.outputs.strand_url }}"
-          echo "Strand version URL: ${{ steps.publish.outputs.strand_version_url }}"
-          echo "Strand version UUID: ${{ steps.publish.outputs.strand_version_uuid }}"
 ```
 
 See a working example [here](examples/publish-strand-version.yml).
+
+## Outputs
+The available outputs from the action are:
+- `strand_url`
+- `strand_version_url`
+- `strand_version_uuid`
+- `suggested_version`
 
 ## Prerequisites
 Before using this action, you must have:
