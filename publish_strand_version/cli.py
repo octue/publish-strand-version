@@ -97,7 +97,7 @@ def main(argv=None):
         )
 
     print(
-        f"{GREEN}STRAND VERSION {mode} SUCCEEDED:{NO_COLOUR}\n"
+        f"{GREEN}STRAND VERSION {mode} SUCCEEDED{NO_COLOUR}\n"
         f"- Strand version URL: {strand_version_url}\n"
         f"- Strand version UUID: {strand_version_uuid}\n"
         f"- Suggested version: {suggested_version}\n",
