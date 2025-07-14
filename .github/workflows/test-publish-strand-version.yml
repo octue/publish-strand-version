@@ -24,4 +24,4 @@ jobs:
           path: tests/schema.json
           notes: Some test notes.
           allow_beta: true
-          suggest_only: true
+#          suggest_only: true
