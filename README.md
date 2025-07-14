@@ -1,6 +1,3 @@
-> [!WARNING]
-> This repository is currently in beta. Please use in production with caution.
-
 # octue/publish-strand-version (GitHub Action)
 A GitHub Action that publishes updates to JSON schemas defined in a GitHub repository to the Octue
 [Strands](https://strands.octue.com) app.
