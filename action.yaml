@@ -61,3 +61,4 @@ runs:
      - ${{ inputs.notes }}
      - ${{ inputs.allow_beta }}
      - ${{ inputs.suggest_only }}
+     - ${{ inputs.show_gql_logs }}
