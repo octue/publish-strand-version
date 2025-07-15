@@ -65,7 +65,7 @@ jobs:
         run: echo "release_notes=$(cat tests/schema/notes.md)" >> $GITHUB_OUTPUT
 
       - name: Publish strand version
-        uses: octue/publish-strand-version@0.2.1
+        uses: octue/publish-strand-version@0.3.0
         with:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: your-account-handle
@@ -103,7 +103,7 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Publish strand version
-        uses: octue/publish-strand-version@0.2.1
+        uses: octue/publish-strand-version@0.3.0
         with:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: your-account-handle
@@ -131,7 +131,7 @@ jobs:
 
       - name: Suggest semantic version
         id: version
-        uses: octue/publish-strand-version@0.2.1
+        uses: octue/publish-strand-version@0.3.0
         with:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: your-account-handle
