@@ -5,6 +5,8 @@ import logging
 import os
 import sys
 
+from gql.transport.requests import log as requests_logger
+
 from publish_strand_version.api import publish_strand_version
 from publish_strand_version.exceptions import StrandsException
 
@@ -36,6 +38,7 @@ def main(argv=None):
     # Strings instead of booleans are used below as GitHub Actions input defaults don't support booleans.
     parser.add_argument("allow_beta", nargs="?", default="true")
     parser.add_argument("suggest_only", nargs="?", default="false")
+    parser.add_argument("show_gql_logs", nargs="?", default="false")
 
     parser.add_argument(
         "--version",
@@ -45,6 +48,10 @@ def main(argv=None):
     )
 
     args = parser.parse_args(argv)
+
+    if args.show_gql_logs != "true":
+        # Suppress `gql.transport.requests` logs.
+        requests_logger.setLevel(logging.WARNING)
 
     if args.allow_beta.lower() == "true":
         allow_beta = True

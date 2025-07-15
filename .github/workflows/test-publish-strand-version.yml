@@ -28,3 +28,4 @@ jobs:
           path: tests/schema/schema.json
           notes: ${{ steps.notes.outputs.release_notes }}
           suggest_only: true
+          show_gql_logs: true
