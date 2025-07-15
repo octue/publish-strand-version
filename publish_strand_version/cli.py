@@ -91,9 +91,9 @@ def main(argv=None):
     print(
         f"{GREEN}STRAND VERSION {mode} SUCCEEDED{NO_COLOUR}\n"
         f"- Strand URL: {strand_url}\n"
-        f"- Semantic version: {version}\n",
-        f"- Strand version URL: {strand_version_url}\n",
-        f"- Strand version UUID: {strand_version_uuid}\n",
+        f"- Semantic version: {version}\n"
+        f"- Strand version URL: {strand_version_url}\n"
+        f"- Strand version UUID: {strand_version_uuid}\n"
     )
 
     sys.exit(0)
