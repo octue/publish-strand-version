@@ -45,13 +45,22 @@ def publish_strand_version(
     suid = f"{account}/{name}"
 
     if version:
-        logger.info("Skipping version suggestion (reason: semantic version manually specified)")
+        logger.info("Semantic version manually specified - skipping version suggestion.")
     else:
-        version = _suggest_sem_ver(token=token, base=suid, proposed=json.dumps(json_schema), allow_beta=allow_beta)
+        version, changed = _suggest_sem_ver(
+            token=token,
+            base=suid,
+            proposed=json.dumps(json_schema),
+            allow_beta=allow_beta,
+        )
 
-    if suggest_only:
-        logger.info("Suggest-only mode enabled - strand version will not be published.")
-        return (None, None, None, version)
+        if not changed:
+            logger.info("Schema hasn't changed - skipping publishing.")
+            return (None, None, None, version)
+
+        if suggest_only:
+            logger.info("Suggest-only mode enabled - skipping publishing.")
+            return (None, None, None, version)
 
     strand_version_uuid = _create_strand_version(
         token=token,
@@ -75,7 +84,7 @@ def _suggest_sem_ver(token, base, proposed, allow_beta):
     :param str proposed: the proposed schema as a JSON-encoded string
     :param bool allow_beta: if `False` and the base version is a beta version (< 1.0.0), interpret major/breaking changes as increasing the version to the lowest non-beta version (1.0.0)
     :raises publish_strand_version.exceptions.StrandsException: if the query fails for any reason
-    :return str: the suggested semantic version for the proposed schema
+    :return (str, bool): the suggested semantic version for the proposed schema, and whether the schema has changed
     """
     parameters = {"token": token, "base": base, "proposed": proposed, "allowBeta": allow_beta}
 
@@ -118,12 +127,14 @@ def _suggest_sem_ver(token, base, proposed, allow_beta):
     if response["changeType"] == "equal":
         message = "The schema hasn't changed. The suggested version is %s."
         message_args = [response["suggestedVersion"]]
+        changed = False
     else:
         message = "The suggested semantic version is %s. This represents a %s change."
         message_args = [response["suggestedVersion"], response["changeType"]]
+        changed = True
 
     logger.info(message, *message_args)
-    return response["suggestedVersion"]
+    return response["suggestedVersion"], changed
 
 
 def _create_strand_version(token, account, name, json_schema, version, notes=None):
