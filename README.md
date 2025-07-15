@@ -14,6 +14,28 @@ You can also:
 
 ## Usage
 
+### Inputs
+
+| Name           | Type    | Required | Default | Description                                                                                                                             |
+|----------------|---------|----------|---------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| `token`        | String  | Yes      |         | An access token for a specific strand                                                                                                   |
+| `account`      | String  | Yes      |         | The account handle of the strand to publish the schema to                                                                               |
+| `name`         | String  | Yes      |         | The name of the strand to publish the schema to                                                                                         |
+| `path`         | String  | Yes      |         | The path to the JSON schema to publish as the new strand version (relative to the repository root)                                      |
+| `version`      | String  |          | `''`    | A specific semantic version to publish the strand version as                                                                            |
+| `notes`        | String  |          | `''`    | Any notes to add to the strand version                                                                                                  |
+| `allow_beta`   | Boolean |          | `true`  | Control whether breaking changes increase the major or minor semantic version number (non-beta or beta versioning schemes respectively) |
+| `suggest_only` | Boolean |          | `false` | Use suggest-only mode - the suggested semantic version is returned but the updated schema isn't published                               |
+
+### Outputs
+| Name                  | Type   | Description                            |
+|-----------------------|--------|----------------------------------------|
+| `strand_url`          | String | The URL for the strand                 |
+| `strand_version_url`  | String | The URL for the new strand version     |
+| `strand_version_uuid` | String | The UUID of the new strand version     |
+| `version`             | String | The semantic version used or suggested |
+
+
 ## Examples
 - [Publish an updated schema](#publish-an-updated-schema)
 - [Publish with a specific semantic version](#publish-with-a-specific-semantic-version)
@@ -118,15 +140,8 @@ jobs:
           suggest_only: true
 
       - name: Print suggested version
-        run: echo ${{ steps.version.outputs.suggested_version }}
+        run: echo ${{ steps.version.outputs.version }}
 ```
-
-### Outputs
-The available outputs from the action are:
-- `strand_url`
-- `strand_version_url`
-- `strand_version_uuid`
-- `suggested_version`
 
 ## Prerequisites
 Before using this action, you must have:
