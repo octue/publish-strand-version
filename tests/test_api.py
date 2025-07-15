@@ -15,7 +15,7 @@ class TestPublishStrandVersion(unittest.TestCase):
             "gql.Client.execute",
             side_effect=[{"createStrandVersionViaToken": {"uuid": expected_strand_version_uuid}}],
         ):
-            strand_url, strand_version_url, strand_version_uuid, suggested_version = publish_strand_version(
+            strand_url, strand_version_url, strand_version_uuid, version = publish_strand_version(
                 token="some-token",
                 account="some",
                 name="strand",
@@ -26,7 +26,7 @@ class TestPublishStrandVersion(unittest.TestCase):
         self.assertEqual(strand_url, "https://strands.octue.com/some/strand")
         self.assertEqual(strand_version_url, "https://jsonschema.registry.octue.com/some/strand/1.0.0.json")
         self.assertEqual(strand_version_uuid, expected_strand_version_uuid)
-        self.assertEqual(suggested_version, "1.0.0")
+        self.assertEqual(version, "1.0.0")
 
     def test_error_raised_if_version_manually_set_in_suggest_only_mode(self):
         """Test that an error is raised if the `version` argument is set when `suggest_only=True`."""
@@ -51,7 +51,7 @@ class TestPublishStrandVersion(unittest.TestCase):
 
         with patch("publish_strand_version.api._create_strand_version") as mock_create_strand_version:
             with patch("gql.Client.execute", return_value=mock_response):
-                strand_url, strand_version_url, strand_version_uuid, suggested_version = publish_strand_version(
+                strand_url, strand_version_url, strand_version_uuid, version = publish_strand_version(
                     token="some-token",
                     account="some",
                     name="strand",
@@ -60,7 +60,7 @@ class TestPublishStrandVersion(unittest.TestCase):
                 )
 
         mock_create_strand_version.assert_not_called()
-        self.assertEqual(suggested_version, "0.2.0")
+        self.assertEqual(version, "0.2.0")
         self.assertIsNone(strand_url)
         self.assertIsNone(strand_version_url)
         self.assertIsNone(strand_version_uuid)

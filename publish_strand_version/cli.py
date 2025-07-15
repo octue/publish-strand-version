@@ -70,7 +70,7 @@ def main(argv=None):
         json_schema = json.load(f)
 
     try:
-        strand_url, strand_version_url, strand_version_uuid, suggested_version = publish_strand_version(
+        strand_url, strand_version_url, strand_version_uuid, version = publish_strand_version(
             token=args.token,
             account=args.account,
             name=args.name,
@@ -92,7 +92,7 @@ def main(argv=None):
                 f"strand_url={strand_url}\n",
                 f"strand_version_url={strand_version_url}\n",
                 f"strand_version_uuid={strand_version_uuid}\n",
-                f"suggested_version={suggested_version}\n",
+                f"version={version}\n",
             ]
         )
 
@@ -100,7 +100,7 @@ def main(argv=None):
         f"{GREEN}STRAND VERSION {mode} SUCCEEDED{NO_COLOUR}\n"
         f"- Strand version URL: {strand_version_url}\n"
         f"- Strand version UUID: {strand_version_uuid}\n"
-        f"- Suggested version: {suggested_version}\n",
+        f"- Semantic version: {version}\n",
     )
 
     sys.exit(0)
