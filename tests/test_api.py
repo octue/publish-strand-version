@@ -30,7 +30,7 @@ class TestPublishStrandVersion(unittest.TestCase):
 
         with patch("publish_strand_version.api._create_strand_version") as mock_create_strand_version:
             with patch("gql.Client.execute", return_value=mock_response):
-                strand_url, strand_version_url, strand_version_uuid, version = publish_strand_version(
+                strand_url, strand_version_url, strand_version_uuid, version, published = publish_strand_version(
                     token="some-token",
                     account="some",
                     name="strand",
@@ -43,6 +43,7 @@ class TestPublishStrandVersion(unittest.TestCase):
         self.assertIsNone(strand_url)
         self.assertIsNone(strand_version_url)
         self.assertIsNone(strand_version_uuid)
+        self.assertFalse(published)
 
     def test_publish_mode(self):
         """Test publishing a strand version."""
@@ -52,7 +53,7 @@ class TestPublishStrandVersion(unittest.TestCase):
             "gql.Client.execute",
             side_effect=[{"createStrandVersionViaToken": {"uuid": expected_strand_version_uuid}}],
         ):
-            strand_url, strand_version_url, strand_version_uuid, version = publish_strand_version(
+            strand_url, strand_version_url, strand_version_uuid, version, published = publish_strand_version(
                 token="some-token",
                 account="some",
                 name="strand",
@@ -64,6 +65,7 @@ class TestPublishStrandVersion(unittest.TestCase):
         self.assertEqual(strand_version_url, "https://jsonschema.registry.octue.com/some/strand/1.0.0.json")
         self.assertEqual(strand_version_uuid, expected_strand_version_uuid)
         self.assertEqual(version, "1.0.0")
+        self.assertTrue(published)
 
     def test_publishing_skipped_if_schema_not_changed(self):
         """Test that publishing is skipped if the schema hasn't changed."""
@@ -71,7 +73,7 @@ class TestPublishStrandVersion(unittest.TestCase):
 
         with patch("publish_strand_version.api._create_strand_version") as mock_create_strand_version:
             with patch("gql.Client.execute", return_value=mock_response):
-                strand_url, strand_version_url, strand_version_uuid, version = publish_strand_version(
+                strand_url, strand_version_url, strand_version_uuid, version, published = publish_strand_version(
                     token="some-token",
                     account="some",
                     name="strand",
@@ -83,6 +85,7 @@ class TestPublishStrandVersion(unittest.TestCase):
         self.assertIsNone(strand_url)
         self.assertIsNone(strand_version_url)
         self.assertIsNone(strand_version_uuid)
+        self.assertFalse(published)
 
 
 class TestSuggestSemVer(unittest.TestCase):

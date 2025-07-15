@@ -39,7 +39,7 @@ class TestCLI(unittest.TestCase):
 
         mock_publish_strand_version = patch(
             "publish_strand_version.cli.publish_strand_version",
-            return_value=(strand_url, strand_version_url, strand_version_uuid, "1.0.0-rc.1"),
+            return_value=(strand_url, strand_version_url, strand_version_uuid, "1.0.0-rc.1", True),
         )
 
         with patch("builtins.open", mock_open(read_data='{"some": "schema"}')):

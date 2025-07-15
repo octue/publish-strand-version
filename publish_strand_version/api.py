@@ -37,7 +37,7 @@ def publish_strand_version(
     :param str notes: any notes to associate with the strand version
     :param bool allow_beta: if `False` and the base version is a beta version (< 1.0.0), interpret major/breaking changes as increasing the version to the lowest non-beta version (1.0.0)
     :param bool suggest_only: if `True`, just return the suggested new version
-    :return (str|None, str|None, str|None, str):
+    :return (str|None, str|None, str|None, str, bool): the strand URL, strand version URL, strand version UUID, semantic version, and whether the strand version was published
     """
     if suggest_only and version:
         raise ValueError("The `version` argument cannot be set while `suggest_only=True`.")
@@ -56,11 +56,11 @@ def publish_strand_version(
 
         if not changed:
             logger.info("Schema hasn't changed - skipping publishing.")
-            return (None, None, None, version)
+            return (None, None, None, version, False)
 
         if suggest_only:
             logger.info("Suggest-only mode enabled - skipping publishing.")
-            return (None, None, None, version)
+            return (None, None, None, version, False)
 
     strand_version_uuid = _create_strand_version(
         token=token,
@@ -73,7 +73,7 @@ def publish_strand_version(
 
     strand_url = "/".join((STRANDS_FRONTEND_URL, suid))
     strand_version_url = "/".join((STRANDS_SCHEMA_REGISTRY_URL, suid, f"{version}.json"))
-    return (strand_url, strand_version_url, strand_version_uuid, version)
+    return (strand_url, strand_version_url, strand_version_uuid, version, True)
 
 
 def _suggest_sem_ver(token, base, proposed, allow_beta):

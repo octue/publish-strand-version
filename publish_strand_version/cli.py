@@ -69,7 +69,7 @@ def main(argv=None):
         json_schema = json.load(f)
 
     try:
-        strand_url, strand_version_url, strand_version_uuid, version = publish_strand_version(
+        strand_url, strand_version_url, strand_version_uuid, version, published = publish_strand_version(
             token=args.token,
             account=args.account,
             name=args.name,
@@ -95,8 +95,13 @@ def main(argv=None):
             ]
         )
 
+    if mode == "PUBLISHING" and not published:
+        status = "SKIPPED"
+    else:
+        status = "SUCCEEDED"
+
     print(
-        f"{GREEN}STRAND VERSION {mode} SUCCEEDED{NO_COLOUR}\n"
+        f"{GREEN}STRAND VERSION {mode} {status}{NO_COLOUR}\n"
         f"- Strand URL: {strand_url}\n"
         f"- Semantic version: {version}\n"
         f"- Strand version URL: {strand_version_url}\n"
