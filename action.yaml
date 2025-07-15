@@ -34,6 +34,10 @@ inputs:
     description: "If `true`, don't publish and just return the suggested new version"
     required: false
     default: 'false'
+  show_gql_logs:
+    description: 'If `true`, show logs from the gql library.'
+    required: false
+    default: 'false'
 
 outputs:
   strand_url:
@@ -42,10 +46,12 @@ outputs:
     description: 'The URL for the new strand version.'
   strand_version_uuid:
     description: 'The UUID of the new strand version.'
+  version:
+    description: 'The semantic version used or suggested'
 
 runs:
    using: 'docker'
-   image: 'docker://octue/publish-strand-version:0.2.0'
+   image: 'docker://octue/publish-strand-version:0.2.1'
    args:
      - ${{ inputs.token }}
      - ${{ inputs.account }}
@@ -55,3 +61,4 @@ runs:
      - ${{ inputs.notes }}
      - ${{ inputs.allow_beta }}
      - ${{ inputs.suggest_only }}
+     - ${{ inputs.show_gql_logs }}
