@@ -26,5 +26,5 @@ jobs:
           account: cortadocodes
           name: test-publish-strand-version
           path: tests/schema/schema.json
-          notes: steps.notes.outputs.release_notes
+          notes: ${{ steps.notes.outputs.release_notes }}
           suggest_only: true
