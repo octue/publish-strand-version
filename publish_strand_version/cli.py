@@ -27,29 +27,21 @@ def main(argv=None):
     :return None:
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "token",
-        help="A Strands access token with permission to create a strand version for the given strand.",
-    )
-    parser.add_argument("account", help="The handle of the account the strand belongs to.")
-    parser.add_argument("name", help="The name of the strand.")
-    parser.add_argument(
-        "path",
-        help="The path to the JSON schema for the new strand version. The path must be relative to the repository "
-        "root.",
-    )
-    parser.add_argument("version", nargs="?", help="The semantic version to give the new strand version.")
-    parser.add_argument("notes", nargs="?", default=None, help="Any notes to add to the strand version.")
+    parser.add_argument("token")
+    parser.add_argument("account")
+    parser.add_argument("name")
+    parser.add_argument("path")
+    parser.add_argument("version", nargs="?")
+    parser.add_argument("notes", nargs="?", default=None)
     # Strings instead of booleans are used below as GitHub Actions input defaults don't support booleans.
-    parser.add_argument("allow_beta", nargs="?", default="true", help="")
-    parser.add_argument("suggest_only", nargs="?", default="false", help="")
+    parser.add_argument("allow_beta", nargs="?", default="true")
+    parser.add_argument("suggest_only", nargs="?", default="false")
 
     parser.add_argument(
         "--version",
         "-v",
         action="version",
         version=importlib.metadata.version("publish-strand-version"),
-        help="Print the version of the publish-strand-version CLI.",
     )
 
     args = parser.parse_args(argv)
