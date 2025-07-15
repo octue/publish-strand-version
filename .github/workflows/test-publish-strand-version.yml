@@ -14,6 +14,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Get release notes
+        id: notes
+        run: echo "release_notes=$(cat tests/schema/notes.md)" >> $GITHUB_OUTPUT
+
       - name: Publish strand version
         id: publish
         uses: octue/publish-strand-version@0.2.0
@@ -21,7 +25,6 @@ jobs:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: cortadocodes
           name: test-publish-strand-version
-          path: tests/schema.json
-          notes: Some test notes.
-          allow_beta: true
-#          suggest_only: true
+          path: tests/schema/schema.json
+          notes: steps.notes.outputs.release_notes
+          suggest_only: true
