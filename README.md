@@ -47,7 +47,7 @@ You can also:
 on:
   push:
     paths:
-      # Only trigger if the schema has changed.
+      # Only publish if the schema has changed
       - relative/path/to/schema.json
     branches:
       - main
@@ -79,7 +79,7 @@ jobs:
 on:
   push:
     paths:
-      # Only trigger if the schema has changed.
+      # Only publish if the schema has changed
       - relative/path/to/schema.json
     branches:
       - main
@@ -118,7 +118,7 @@ jobs:
 on:
   push:
     paths:
-      # Only trigger if the schema has changed.
+      # Only run if the schema has changed
       - relative/path/to/schema.json
 
 jobs:
