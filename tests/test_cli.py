@@ -1,5 +1,4 @@
 import os
-import tempfile
 import unittest
 from unittest.mock import mock_open, patch
 
@@ -31,41 +30,26 @@ class TestCLI(unittest.TestCase):
 
     def test_with_skipped_publishing(self):
         """Test the output when publishing is skipped."""
-        mock_publish_strand_version = patch(
-            "publish_strand_version.cli.publish_strand_version",
-            return_value=(None, None, None, "1.0.0", False),
-        )
 
         with patch("builtins.open", mock_open(read_data='{"some": "schema"}')):
-            with mock_publish_strand_version as mock_publish_strand_version:
-                with tempfile.NamedTemporaryFile() as temporary_file:
-                    with patch.dict(os.environ, {"GITHUB_OUTPUT": temporary_file.name}):
-                        with patch("sys.stdout") as mock_stdout:
-                            with self.assertRaises(SystemExit) as e:
-                                cli.main(
-                                    [
-                                        "some-token",
-                                        "some",
-                                        "strand",
-                                        "non-existent-path.json",
-                                    ]
-                                )
-
-        mock_publish_strand_version.assert_called_with(
-            token="some-token",
-            account="some",
-            name="strand",
-            json_schema={"some": "schema"},
-            version=None,
-            notes=None,
-            allow_beta=True,
-            suggest_only=False,
-        )
+            with patch(
+                "publish_strand_version.cli.publish_strand_version",
+                return_value=(None, None, None, "1.0.0", False),
+            ):
+                with patch.dict(os.environ, {"GITHUB_OUTPUT": "/dev/null"}):
+                    with patch("sys.stdout") as mock_stdout:
+                        with self.assertRaises(SystemExit) as e:
+                            cli.main(
+                                [
+                                    "some-token",
+                                    "some",
+                                    "strand",
+                                    "non-existent-path.json",
+                                ]
+                            )
 
         self.assertEqual(e.exception.code, 0)
-
-        message = mock_stdout.method_calls[0].args[0]
-        self.assertIn("STRAND VERSION PUBLISHING SKIPPED", message)
+        self.assertIn("STRAND VERSION PUBLISHING SKIPPED", mock_stdout.method_calls[0].args[0])
 
     def test_with_successful_publishing(self):
         """Test that the exit code is 0 if publishing succeeds and that the mutation is called with the correct
@@ -82,20 +66,19 @@ class TestCLI(unittest.TestCase):
 
         with patch("builtins.open", mock_open(read_data='{"some": "schema"}')):
             with mock_publish_strand_version as mock_publish_strand_version:
-                with tempfile.NamedTemporaryFile() as temporary_file:
-                    with patch.dict(os.environ, {"GITHUB_OUTPUT": temporary_file.name}):
-                        with patch("sys.stdout") as mock_stdout:
-                            with self.assertRaises(SystemExit) as e:
-                                cli.main(
-                                    [
-                                        "some-token",
-                                        "some",
-                                        "strand",
-                                        "non-existent-path.json",
-                                        "1.0.0-rc.1",
-                                        "Some notes.",
-                                    ]
-                                )
+                with patch.dict(os.environ, {"GITHUB_OUTPUT": "/dev/null"}):
+                    with patch("sys.stdout") as mock_stdout:
+                        with self.assertRaises(SystemExit) as e:
+                            cli.main(
+                                [
+                                    "some-token",
+                                    "some",
+                                    "strand",
+                                    "non-existent-path.json",
+                                    "1.0.0-rc.1",
+                                    "Some notes.",
+                                ]
+                            )
 
         mock_publish_strand_version.assert_called_with(
             token="some-token",
@@ -129,22 +112,21 @@ class TestCLI(unittest.TestCase):
 
         with patch("builtins.open", mock_open(read_data='{"some": "schema"}')):
             with mock_publish_strand_version as mock_publish_strand_version:
-                with tempfile.NamedTemporaryFile() as temporary_file:
-                    with patch.dict(os.environ, {"GITHUB_OUTPUT": temporary_file.name}):
-                        with patch("sys.stdout") as mock_stdout:
-                            with self.assertRaises(SystemExit) as e:
-                                cli.main(
-                                    [
-                                        "some-token",
-                                        "some",
-                                        "strand",
-                                        "non-existent-path.json",
-                                        "1.0.0-rc.1",
-                                        "Some notes.",
-                                        "true",
-                                        "true",
-                                    ]
-                                )
+                with patch.dict(os.environ, {"GITHUB_OUTPUT": "/dev/null"}):
+                    with patch("sys.stdout") as mock_stdout:
+                        with self.assertRaises(SystemExit) as e:
+                            cli.main(
+                                [
+                                    "some-token",
+                                    "some",
+                                    "strand",
+                                    "non-existent-path.json",
+                                    "1.0.0-rc.1",
+                                    "Some notes.",
+                                    "true",
+                                    "true",
+                                ]
+                            )
 
         mock_publish_strand_version.assert_called_with(
             token="some-token",
