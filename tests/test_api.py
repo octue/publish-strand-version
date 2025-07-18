@@ -7,27 +7,6 @@ from publish_strand_version.exceptions import StrandsException
 
 
 class TestPublishStrandVersion(unittest.TestCase):
-    def test_with_existing_strand(self):
-        """Test publishing a strand version for an existing strand."""
-        expected_strand_version_uuid = "e75dd480-4bfa-4ae9-b5c0-853e9a114194"
-
-        with patch(
-            "gql.Client.execute",
-            side_effect=[{"createStrandVersionViaToken": {"uuid": expected_strand_version_uuid}}],
-        ):
-            strand_url, strand_version_url, strand_version_uuid, version = publish_strand_version(
-                token="some-token",
-                account="some",
-                name="strand",
-                json_schema={"some": "schema"},
-                version="1.0.0",
-            )
-
-        self.assertEqual(strand_url, "https://strands.octue.com/some/strand")
-        self.assertEqual(strand_version_url, "https://jsonschema.registry.octue.com/some/strand/1.0.0.json")
-        self.assertEqual(strand_version_uuid, expected_strand_version_uuid)
-        self.assertEqual(version, "1.0.0")
-
     def test_error_raised_if_version_manually_set_in_suggest_only_mode(self):
         """Test that an error is raised if the `version` argument is set when `suggest_only=True`."""
         with self.assertRaises(ValueError) as error_context:
@@ -51,7 +30,7 @@ class TestPublishStrandVersion(unittest.TestCase):
 
         with patch("publish_strand_version.api._create_strand_version") as mock_create_strand_version:
             with patch("gql.Client.execute", return_value=mock_response):
-                strand_url, strand_version_url, strand_version_uuid, version = publish_strand_version(
+                strand_url, strand_version_url, strand_version_uuid, version, published = publish_strand_version(
                     token="some-token",
                     account="some",
                     name="strand",
@@ -64,6 +43,49 @@ class TestPublishStrandVersion(unittest.TestCase):
         self.assertIsNone(strand_url)
         self.assertIsNone(strand_version_url)
         self.assertIsNone(strand_version_uuid)
+        self.assertFalse(published)
+
+    def test_publish_mode(self):
+        """Test publishing a strand version."""
+        expected_strand_version_uuid = "e75dd480-4bfa-4ae9-b5c0-853e9a114194"
+
+        with patch(
+            "gql.Client.execute",
+            side_effect=[{"createStrandVersionViaToken": {"uuid": expected_strand_version_uuid}}],
+        ):
+            strand_url, strand_version_url, strand_version_uuid, version, published = publish_strand_version(
+                token="some-token",
+                account="some",
+                name="strand",
+                json_schema={"some": "schema"},
+                version="1.0.0",
+            )
+
+        self.assertEqual(strand_url, "https://strands.octue.com/some/strand")
+        self.assertEqual(strand_version_url, "https://jsonschema.registry.octue.com/some/strand/1.0.0.json")
+        self.assertEqual(strand_version_uuid, expected_strand_version_uuid)
+        self.assertEqual(version, "1.0.0")
+        self.assertTrue(published)
+
+    def test_publishing_skipped_if_schema_not_changed(self):
+        """Test that publishing is skipped if the schema hasn't changed."""
+        mock_response = {"suggestSemVerViaToken": {"suggestedVersion": "0.2.0", "changeType": "equal"}}
+
+        with patch("publish_strand_version.api._create_strand_version") as mock_create_strand_version:
+            with patch("gql.Client.execute", return_value=mock_response):
+                strand_url, strand_version_url, strand_version_uuid, version, published = publish_strand_version(
+                    token="some-token",
+                    account="some",
+                    name="strand",
+                    json_schema={"some": "schema"},
+                )
+
+        mock_create_strand_version.assert_not_called()
+        self.assertEqual(version, "0.2.0")
+        self.assertIsNone(strand_url)
+        self.assertIsNone(strand_version_url)
+        self.assertIsNone(strand_version_uuid)
+        self.assertFalse(published)
 
 
 class TestSuggestSemVer(unittest.TestCase):
@@ -95,7 +117,7 @@ class TestSuggestSemVer(unittest.TestCase):
                 allow_beta=True,
             )
 
-        self.assertEqual(response, "0.2.0")
+        self.assertEqual(response, ("0.2.0", True))
 
         self.assertEqual(
             mock_execute.mock_calls[0].kwargs["variable_values"],

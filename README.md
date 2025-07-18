@@ -16,16 +16,17 @@ You can also:
 
 ### Inputs
 
-| Name           | Type    | Required | Default | Description                                                                                                                             |
-|----------------|---------|----------|---------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| `token`        | String  | Yes      |         | An access token for a specific strand                                                                                                   |
-| `account`      | String  | Yes      |         | The account handle of the strand to publish the schema to                                                                               |
-| `name`         | String  | Yes      |         | The name of the strand to publish the schema to                                                                                         |
-| `path`         | String  | Yes      |         | The path to the JSON schema to publish as the new strand version (relative to the repository root)                                      |
-| `version`      | String  |          | `''`    | A specific semantic version to publish the strand version as                                                                            |
-| `notes`        | String  |          | `''`    | Any notes to add to the strand version                                                                                                  |
-| `allow_beta`   | Boolean |          | `true`  | Control whether breaking changes increase the major or minor semantic version number (non-beta or beta versioning schemes respectively) |
-| `suggest_only` | Boolean |          | `false` | Use suggest-only mode - the suggested semantic version is returned but the updated schema isn't published                               |
+| Name             | Type    | Required | Default  | Description                                                                                                                                                                                                                                                                              |
+|------------------|---------|----------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `token`          | String  | Yes      |          | An access token for a specific strand                                                                                                                                                                                                                                                    |
+| `account`        | String  | Yes      |          | The account handle of the strand to publish the schema to                                                                                                                                                                                                                                |
+| `name`           | String  | Yes      |          | The name of the strand to publish the schema to                                                                                                                                                                                                                                          |
+| `path`           | String  | Yes      |          | The path to the JSON schema to publish as the new strand version (relative to the repository root)                                                                                                                                                                                       |
+| `version`        | String  |          | `''`     | A specific semantic version to publish the strand version as                                                                                                                                                                                                                             |
+| `notes`          | String  |          | `''`     | Any notes to add to the strand version                                                                                                                                                                                                                                                   |
+| `allow_beta`     | Boolean |          | `true`   | Control whether breaking changes increase the major or minor semantic version number ([non-beta/production versioning vs beta / initial development versioning](https://semver.org/spec/v2.0.0.html#how-should-i-deal-with-revisions-in-the-0yz-initial-development-phase) respectively) |
+| `suggest_only`   | Boolean |          | `false`  | Use suggest-only mode - the suggested semantic version is returned but the updated schema isn't published                                                                                                                                                                                |
+| `show_gql_logs`  | Boolean |          | `false`  | Show logs from the `gql` library (these can help with troubleshooting but are quite verbose)                                                                                                                                                                                             |
 
 ### Outputs
 | Name                  | Type   | Description                            |
@@ -47,7 +48,7 @@ You can also:
 on:
   push:
     paths:
-      # Only trigger if the schema has changed.
+      # Only publish if the schema has changed
       - relative/path/to/schema.json
     branches:
       - main
@@ -65,7 +66,7 @@ jobs:
         run: echo "release_notes=$(cat tests/schema/notes.md)" >> $GITHUB_OUTPUT
 
       - name: Publish strand version
-        uses: octue/publish-strand-version@0.3.0
+        uses: octue/publish-strand-version@0.3.1
         with:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: your-account-handle
@@ -79,7 +80,7 @@ jobs:
 on:
   push:
     paths:
-      # Only trigger if the schema has changed.
+      # Only publish if the schema has changed
       - relative/path/to/schema.json
     branches:
       - main
@@ -103,7 +104,7 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Publish strand version
-        uses: octue/publish-strand-version@0.3.0
+        uses: octue/publish-strand-version@0.3.1
         with:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: your-account-handle
@@ -118,7 +119,7 @@ jobs:
 on:
   push:
     paths:
-      # Only trigger if the schema has changed.
+      # Only run if the schema has changed
       - relative/path/to/schema.json
 
 jobs:
@@ -131,7 +132,7 @@ jobs:
 
       - name: Suggest semantic version
         id: version
-        uses: octue/publish-strand-version@0.3.0
+        uses: octue/publish-strand-version@0.3.1
         with:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: your-account-handle
