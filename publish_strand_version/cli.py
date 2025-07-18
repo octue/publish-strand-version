@@ -88,8 +88,8 @@ def main(argv=None):
     with open(os.environ["GITHUB_OUTPUT"], "a") as f:
         f.writelines(
             [
-                f"strand_url={strand_url}\n",
                 f"version={version}\n",
+                f"strand_url={strand_url}\n",
                 f"strand_version_url={strand_version_url}\n",
                 f"strand_version_uuid={strand_version_uuid}\n",
             ]
@@ -102,8 +102,8 @@ def main(argv=None):
 
     print(
         f"{GREEN}STRAND VERSION {mode} {status}{NO_COLOUR}\n"
-        f"- Strand URL: {strand_url}\n"
         f"- Semantic version: {version}\n"
+        f"- Strand URL: {strand_url}\n"
         f"- Strand version URL: {strand_version_url}\n"
         f"- Strand version UUID: {strand_version_uuid}\n"
     )
