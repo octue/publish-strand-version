@@ -10,16 +10,17 @@ from gql.transport.requests import log as requests_logger
 from publish_strand_version.api import publish_strand_version
 from publish_strand_version.exceptions import StrandsException
 
-RED = "\033[0;31m"
-GREEN = "\033[0;32m"
-NO_COLOUR = "\033[0m"
-
-
 logging.basicConfig(
     stream=sys.stdout,
     format="[%(asctime)s | %(levelname)s | %(name)s] %(message)s",
     level=logging.INFO,
 )
+
+logger = logging.getLogger(__name__)
+
+RED = "\033[0;31m"
+GREEN = "\033[0;32m"
+NO_COLOUR = "\033[0m"
 
 
 def main(argv=None):
@@ -80,8 +81,9 @@ def main(argv=None):
             suggest_only=suggest_only,
         )
 
-    except StrandsException:
+    except StrandsException as e:
         print(f"{RED}STRAND VERSION {mode} FAILED.{NO_COLOUR}", file=sys.stderr)
+        logger.exception(e)
         sys.exit(1)
 
     # Write outputs to GitHub outputs file for action.
