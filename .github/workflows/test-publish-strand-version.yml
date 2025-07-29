@@ -20,7 +20,7 @@ jobs:
 
       - name: Publish strand version
         id: publish
-        uses: octue/publish-strand-version@0.3.1
+        uses: octue/publish-strand-version@0.3.2
         with:
           token: ${{ secrets.STRANDS_TOKEN }}
           account: cortadocodes

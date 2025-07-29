@@ -10,20 +10,25 @@ class TestCLI(unittest.TestCase):
     def test_with_failed_publishing(self):
         """Test that the exit code is 1 if publishing fails."""
         with patch("builtins.open", mock_open(read_data="{}")):
-            with patch("publish_strand_version.cli.publish_strand_version", side_effect=StrandsException):
+            with patch(
+                "publish_strand_version.cli.publish_strand_version",
+                side_effect=StrandsException("Error raised for testing!"),
+            ):
                 with patch("sys.stderr") as mock_stderr:
-                    with self.assertRaises(SystemExit) as e:
-                        cli.main(
-                            [
-                                "token",
-                                "some",
-                                "strand",
-                                "non-existent-path.json",
-                                "1.0.0",
-                            ]
-                        )
+                    with self.assertLogs() as logging_context:
+                        with self.assertRaises(SystemExit) as e:
+                            cli.main(
+                                [
+                                    "token",
+                                    "some",
+                                    "strand",
+                                    "non-existent-path.json",
+                                    "1.0.0",
+                                ]
+                            )
 
         self.assertEqual(e.exception.code, 1)
+        self.assertIn("Error raised for testing!", logging_context.output[0])
 
         message = mock_stderr.method_calls[0].args[0]
         self.assertIn("STRAND VERSION PUBLISHING FAILED.", message)
