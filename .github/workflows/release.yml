@@ -49,34 +49,42 @@ jobs:
     runs-on: ubuntu-latest
     needs: tests
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Log in to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        platforms: linux/amd64
+        push: true
+        tags: octue/publish-strand-version:${{ needs.tests.outputs.package_version }},octue/publish-strand-version:latest
+
+    - name: Point action.yaml at pre-built image
+      run: sed -i "s|image: 'Dockerfile'|image: 'docker://octue/publish-strand-version:${{ needs.tests.outputs.package_version }}'|" action.yaml
+
+    - name: Commit and tag release
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add action.yaml
+        git commit -m "REL: Use pre-built Docker image for ${{ needs.tests.outputs.package_version }}"
+        git tag "${{ needs.tests.outputs.package_version }}"
+        git push origin main --tags
+
     - name: Create Release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, no need to create your own.
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: "${{ needs.tests.outputs.package_version }}"
         release_name: ${{ github.event.pull_request.title }}
         body: ${{ github.event.pull_request.body }}
         draft: false
         prerelease: false
-
-  docker:
-    runs-on: ubuntu-latest
-    needs: [tests, release]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Log in to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/amd64
-          push: true
-          tags: octue/publish-strand-version:${{ needs.tests.outputs.package_version }},octue/publish-strand-version:latest
