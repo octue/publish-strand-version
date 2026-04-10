@@ -39,7 +39,7 @@ class TestCLI(unittest.TestCase):
         with patch("builtins.open", mock_open(read_data='{"some": "schema"}')):
             with patch(
                 "publish_strand_version.cli.publish_strand_version",
-                return_value=(None, None, None, "1.0.0", False, "equal", "1.0.0", "1.0.0"),
+                return_value=("https://strands.octue.com/some/strand", "", "", "1.0.0", False, "equal", "1.0.0", "1.0.0"),
             ):
                 with patch.dict(os.environ, {"GITHUB_OUTPUT": "/dev/null"}):
                     with patch("sys.stdout") as mock_stdout:
@@ -106,13 +106,9 @@ class TestCLI(unittest.TestCase):
 
     def test_with_successful_suggestion(self):
         """Test the output for a successful version suggestion."""
-        strand_version_uuid = "14aca8b2-fb34-4587-a7ba-290585265d32"
-        strand_url = "strand-url"
-        strand_version_url = "strand-version-url"
-
         mock_publish_strand_version = patch(
             "publish_strand_version.cli.publish_strand_version",
-            return_value=(strand_url, strand_version_url, strand_version_uuid, "1.0.0-rc.1", False, "major", "0.2.0", "0.2.0"),
+            return_value=("https://strands.octue.com/some/strand", "", "", "1.0.0-rc.1", False, "major", "0.2.0", "0.2.0"),
         )
 
         with patch("builtins.open", mock_open(read_data='{"some": "schema"}')):
@@ -148,6 +144,4 @@ class TestCLI(unittest.TestCase):
 
         message = mock_stdout.method_calls[0].args[0]
         self.assertIn("STRAND VERSION SUGGESTION SUCCEEDED", message)
-        self.assertIn(strand_url, message)
-        self.assertIn(strand_version_url, message)
-        self.assertIn(strand_version_uuid, message)
+        self.assertIn("https://strands.octue.com/some/strand", message)
