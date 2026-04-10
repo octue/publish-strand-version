@@ -77,7 +77,7 @@ jobs:
         git add action.yaml
         git commit -m "REL: Use pre-built Docker image for ${{ needs.tests.outputs.package_version }}"
         git tag "${{ needs.tests.outputs.package_version }}"
-        git push origin main --tags
+        git push origin "${{ needs.tests.outputs.package_version }}"
 
     - name: Create Release
       uses: actions/create-release@v1
