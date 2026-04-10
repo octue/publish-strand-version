@@ -57,7 +57,7 @@ outputs:
 
 runs:
    using: 'docker'
-   image: 'Dockerfile'
+   image: 'docker://octue/publish-strand-version:1.0.0'
    args:
      - ${{ inputs.token }}
      - ${{ inputs.account }}
