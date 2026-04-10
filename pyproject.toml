@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "publish-strand-version"
-version = "0.3.2"
+version = "0.4.0"
 description = "A GitHub action that publishes JSON schemas to the Octue Strands app."
-authors = ["Marcus Lugg <marcus@octue.com>"]
+authors = ["Marcus Lugg <marcus@octue.com>", "Tom Clark <tom@octue.com>"]
 readme = "README.md"
 packages = [{include = "publish_strand_version"}]
 

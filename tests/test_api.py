@@ -26,11 +26,11 @@ class TestPublishStrandVersion(unittest.TestCase):
 
     def test_suggest_only_mode(self):
         """Test that the strand version creation mutation is not used when suggest-only mode is enabled."""
-        mock_response = {"suggestSemVerViaToken": {"suggestedVersion": "0.2.0", "changeType": "minor"}}
+        mock_response = {"suggestSemVerViaToken": {"suggestedVersion": "0.2.0", "change": "MINOR", "latestVersion": "0.1.0", "stableVersion": "0.1.0"}}
 
         with patch("publish_strand_version.api._create_strand_version") as mock_create_strand_version:
             with patch("gql.Client.execute", return_value=mock_response):
-                strand_url, strand_version_url, strand_version_uuid, version, published = publish_strand_version(
+                strand_url, strand_version_url, strand_version_uuid, version, published, change, latest_version, stable_version = publish_strand_version(
                     token="some-token",
                     account="some",
                     name="strand",
@@ -44,6 +44,9 @@ class TestPublishStrandVersion(unittest.TestCase):
         self.assertIsNone(strand_version_url)
         self.assertIsNone(strand_version_uuid)
         self.assertFalse(published)
+        self.assertEqual(change, "minor")
+        self.assertEqual(latest_version, "0.1.0")
+        self.assertEqual(stable_version, "0.1.0")
 
     def test_publish_mode(self):
         """Test publishing a strand version."""
@@ -51,9 +54,12 @@ class TestPublishStrandVersion(unittest.TestCase):
 
         with patch(
             "gql.Client.execute",
-            side_effect=[{"createStrandVersionViaToken": {"uuid": expected_strand_version_uuid}}],
+            side_effect=[
+                {"suggestSemVerViaToken": {"suggestedVersion": "1.0.0", "change": "MAJOR", "latestVersion": "0.2.0", "stableVersion": "0.2.0"}},
+                {"createStrandVersionViaToken": {"uuid": expected_strand_version_uuid}},
+            ],
         ):
-            strand_url, strand_version_url, strand_version_uuid, version, published = publish_strand_version(
+            strand_url, strand_version_url, strand_version_uuid, version, published, change, latest_version, stable_version = publish_strand_version(
                 token="some-token",
                 account="some",
                 name="strand",
@@ -66,14 +72,17 @@ class TestPublishStrandVersion(unittest.TestCase):
         self.assertEqual(strand_version_uuid, expected_strand_version_uuid)
         self.assertEqual(version, "1.0.0")
         self.assertTrue(published)
+        self.assertEqual(change, "major")
+        self.assertEqual(latest_version, "0.2.0")
+        self.assertEqual(stable_version, "0.2.0")
 
     def test_publishing_skipped_if_schema_not_changed(self):
         """Test that publishing is skipped if the schema hasn't changed."""
-        mock_response = {"suggestSemVerViaToken": {"suggestedVersion": "0.2.0", "changeType": "equal"}}
+        mock_response = {"suggestSemVerViaToken": {"suggestedVersion": "0.2.0", "change": "EQUAL", "latestVersion": "0.2.0", "stableVersion": "0.2.0"}}
 
         with patch("publish_strand_version.api._create_strand_version") as mock_create_strand_version:
             with patch("gql.Client.execute", return_value=mock_response):
-                strand_url, strand_version_url, strand_version_uuid, version, published = publish_strand_version(
+                strand_url, strand_version_url, strand_version_uuid, version, published, change, latest_version, stable_version = publish_strand_version(
                     token="some-token",
                     account="some",
                     name="strand",
@@ -86,6 +95,9 @@ class TestPublishStrandVersion(unittest.TestCase):
         self.assertIsNone(strand_version_url)
         self.assertIsNone(strand_version_uuid)
         self.assertFalse(published)
+        self.assertEqual(change, "equal")
+        self.assertEqual(latest_version, "0.2.0")
+        self.assertEqual(stable_version, "0.2.0")
 
 
 class TestSuggestSemVer(unittest.TestCase):
@@ -106,7 +118,7 @@ class TestSuggestSemVer(unittest.TestCase):
         self.assertEqual(error_context.exception.args[0][0]["message"], "User is not authenticated.")
 
     def test_suggesting_sem_ver(self):
-        mock_response = {"suggestSemVerViaToken": {"suggestedVersion": "0.2.0", "changeType": "minor"}}
+        mock_response = {"suggestSemVerViaToken": {"suggestedVersion": "0.2.0", "change": "MINOR", "latestVersion": "0.1.0", "stableVersion": "0.1.0"}}
         json_schema_encoded = json.dumps({"some": "schema"})
 
         with patch("gql.Client.execute", return_value=mock_response) as mock_execute:
@@ -117,12 +129,27 @@ class TestSuggestSemVer(unittest.TestCase):
                 allow_beta=True,
             )
 
-        self.assertEqual(response, ("0.2.0", True))
+        self.assertEqual(response, ("0.2.0", True, "minor", "0.1.0", "0.1.0"))
 
         self.assertEqual(
             mock_execute.mock_calls[0].kwargs["variable_values"],
             {"token": "some-token", "base": "some/strand", "proposed": json_schema_encoded, "allowBeta": True},
         )
+
+    def test_suggesting_sem_ver_initial(self):
+        """Test suggesting a version for a strand with no existing versions."""
+        mock_response = {"suggestSemVerViaToken": {"suggestedVersion": "0.1.0", "change": "INITIAL", "latestVersion": None, "stableVersion": None}}
+        json_schema_encoded = json.dumps({"some": "schema"})
+
+        with patch("gql.Client.execute", return_value=mock_response):
+            response = _suggest_sem_ver(
+                token="some-token",
+                base="some/strand",
+                proposed=json_schema_encoded,
+                allow_beta=True,
+            )
+
+        self.assertEqual(response, ("0.1.0", True, "initial", "", ""))
 
 
 class TestCreateStrandVersion(unittest.TestCase):

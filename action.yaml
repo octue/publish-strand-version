@@ -48,6 +48,12 @@ outputs:
     description: 'The UUID of the new strand version.'
   version:
     description: 'The semantic version used or suggested'
+  change:
+    description: 'The type of change detected (equal, initial, patch, minor, or major)'
+  latest_version:
+    description: 'The highest published version of the strand (including candidate releases), or empty if none exists'
+  stable_version:
+    description: 'The highest published non-candidate version, or empty if none exists'
 
 runs:
    using: 'docker'

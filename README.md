@@ -29,12 +29,15 @@ You can also:
 | `show_gql_logs`  | Boolean |          | `false`  | Show logs from the `gql` library (these can help with troubleshooting but are quite verbose)                                                                                                                                                                                             |
 
 ### Outputs
-| Name                  | Type   | Description                            |
-|-----------------------|--------|----------------------------------------|
-| `strand_url`          | String | The URL for the strand                 |
-| `strand_version_url`  | String | The URL for the new strand version     |
-| `strand_version_uuid` | String | The UUID of the new strand version     |
-| `version`             | String | The semantic version used or suggested |
+| Name                  | Type   | Description                                                                              |
+|-----------------------|--------|------------------------------------------------------------------------------------------|
+| `strand_url`          | String | The URL for the strand                                                                   |
+| `strand_version_url`  | String | The URL for the new strand version                                                       |
+| `strand_version_uuid` | String | The UUID of the new strand version                                                       |
+| `version`             | String | The semantic version used or suggested                                                   |
+| `change`              | String | The type of change detected (`equal`, `initial`, `patch`, `minor`, or `major`)           |
+| `latest_version`      | String | The highest published version of the strand (including candidate releases), or empty      |
+| `stable_version`      | String | The highest published non-candidate version, or empty                                    |
 
 
 ## Examples
