@@ -67,7 +67,8 @@ jobs:
         tags: octue/publish-strand-version:${{ needs.tests.outputs.package_version }},octue/publish-strand-version:latest
 
     - name: Point action.yaml at pre-built image
-      run: sed -i "s|image: 'Dockerfile'|image: 'docker://octue/publish-strand-version:${{ needs.tests.outputs.package_version }}'|" action.yaml
+      run: |
+        sed -i "s|image: 'Dockerfile'|image: 'docker://octue/publish-strand-version:${{ needs.tests.outputs.package_version }}'|" action.yaml
 
     - name: Commit and tag release
       run: |
