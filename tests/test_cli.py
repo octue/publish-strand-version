@@ -39,7 +39,7 @@ class TestCLI(unittest.TestCase):
         with patch("builtins.open", mock_open(read_data='{"some": "schema"}')):
             with patch(
                 "publish_strand_version.cli.publish_strand_version",
-                return_value=(None, None, None, "1.0.0", False),
+                return_value=(None, None, None, "1.0.0", False, "equal", "1.0.0", "1.0.0"),
             ):
                 with patch.dict(os.environ, {"GITHUB_OUTPUT": "/dev/null"}):
                     with patch("sys.stdout") as mock_stdout:
@@ -66,7 +66,7 @@ class TestCLI(unittest.TestCase):
 
         mock_publish_strand_version = patch(
             "publish_strand_version.cli.publish_strand_version",
-            return_value=(strand_url, strand_version_url, strand_version_uuid, "1.0.0-rc.1", True),
+            return_value=(strand_url, strand_version_url, strand_version_uuid, "1.0.0-rc.1", True, "major", "0.2.0", "0.2.0"),
         )
 
         with patch("builtins.open", mock_open(read_data='{"some": "schema"}')):
@@ -112,7 +112,7 @@ class TestCLI(unittest.TestCase):
 
         mock_publish_strand_version = patch(
             "publish_strand_version.cli.publish_strand_version",
-            return_value=(strand_url, strand_version_url, strand_version_uuid, "1.0.0-rc.1", False),
+            return_value=(strand_url, strand_version_url, strand_version_uuid, "1.0.0-rc.1", False, "major", "0.2.0", "0.2.0"),
         )
 
         with patch("builtins.open", mock_open(read_data='{"some": "schema"}')):
